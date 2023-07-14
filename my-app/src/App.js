@@ -8,6 +8,7 @@ import Contact from "./Components/Home/Contact";
 import Login from "./Components/Account/Login";
 import Register from "./Components/Account/Register";
 import Sidebar from "./Components/Admin/Layout/Sidebar";
+import IndexDV from "./Components/Admin/IndexDemo";
 function App() {
   return (
     <div className="App">
