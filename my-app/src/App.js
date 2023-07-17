@@ -7,8 +7,12 @@ import Booking from "./Components/Home/Booking";
 import Contact from "./Components/Home/Contact";
 import Login from "./Components/Account/Login";
 import Register from "./Components/Account/Register";
-import Sidebar from "./Components/Admin/Layout/Sidebar";
-import IndexDV from "./Components/Admin/IndexDemo";
+import Create_Customer_Components from "./Components/Admin/Customer_Manager/Create_Customer_Component";
+import Customer_List_Components from "./Components/Admin/Customer_Manager/Customer_List_Components";
+import Customer_Detail_Components from "./Components/Admin/Customer_Manager/Customer_Detail_Components";
+import { APP_ROUTERS } from "./Contants";
+import Customer_List_Search_Components from "./Components/Admin/Customer_Manager/Customer_List_Search_Components";
+import Appointment_List_Components from "./Components/Admin/Appointment_Manager/Appointment_List_Components";
 function App() {
   return (
     <div className="App">
@@ -21,7 +25,11 @@ function App() {
         <Route path="/service" element={<Service />}></Route>
         <Route path="/booking" element={<Booking />}></Route>
         <Route path="/contact" element={<Contact />}></Route>
-        <Route path="/Admin" element={<Sidebar />}></Route>
+        <Route path={APP_ROUTERS.CUSTOMER.ADD.VALUE} element={<Create_Customer_Components />}></Route>
+        <Route path={APP_ROUTERS.CUSTOMER.INDEX.VALUE} element={<Customer_List_Components />}></Route>
+        <Route path={APP_ROUTERS.CUSTOMER.DETAIL.VALUE} element={<Customer_Detail_Components />}></Route>
+        <Route path={APP_ROUTERS.CUSTOMER.SEARCH.VALUE} element={<Customer_List_Search_Components />}></Route>
+        <Route path={APP_ROUTERS.APPOINTMENT.INDEX.VALUE} element={<Appointment_List_Components />}></Route>
       </Routes>
     </div>
   );

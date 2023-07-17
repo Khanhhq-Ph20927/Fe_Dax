@@ -1,24 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Sidebar from "../Layout/Sidebar";
 import Customer_Service from "../../../Api/Customer_Service";
 
-export default function Create_Customer_Components() {
-    const [customer, setCustomer] = useState([]);
+function Customer_Detail_Components() {
+    const { id } = useParams();
+    const [maKhachHang, setMaKhachHang] = useState('');
     const [ho, setHo] = useState('');
     const [ten, setTen] = useState('');
     const [email, setEmail] = useState('');
     const [sdt, setSdt] = useState('');
     const [diaChi, setDiaChi] = useState('');
     const [gioiTinh, setGioiTinh] = useState(true);
+    const [matKhau, setMatKhau] = useState('');
+    const [customerList, setCustomerList] = useState([]);
     useEffect(() => {
+        Customer_Service.getById(id).then((response) => {
+            let customer = response.data;
+            setMaKhachHang(customer.maKhachHang);
+            setHo(customer.ho);
+            setTen(customer.ten);
+            setEmail(customer.email);
+            setDiaChi(customer.diaChi);
+            setSdt(customer.sdt);
+            setGioiTinh(customer.gioiTinh);
+        });
         ListCustomer();
-    }, [])
+    }, [id])
     const ListCustomer = () => {
-        Customer_Service.getAllCustomer().then((response) => {
-            setCustomer(response.data);
-        }).catch((error) => { console.log(error); })
-            ;
+        Customer_Service.getById(id).then((response) => {
+            let customer = response.data;
+            let ma_KH = customer.maKhachHang;
+            Customer_Service.getAllCustomer().then((response) => {
+                const tempList = response.data.filter((item) => item.maKhachHang !== ma_KH);
+                setCustomerList(tempList);
+            }).catch((error) => { console.log(error); });
+        });
+    }
+    const changeMa = (e) => {
+        setMaKhachHang(e.target.value);
     }
     const changeHo = (e) => {
         setHo(e.target.value);
@@ -35,21 +55,33 @@ export default function Create_Customer_Components() {
     const changeDiaChi = (e) => {
         setDiaChi(e.target.value);
     }
-    const saveCustomer = (e) => {
+    const changeMatKhau = (e) => {
+        setMatKhau(e.target.value);
+    }
+    const updateCustomer = (e) => {
         e.preventDefault();
-        let newCustomer = {
+        let customerUpdate = {
+            maKhachHang,
             ho,
             ten,
             email,
             sdt,
             diaChi,
             gioiTinh,
-            matKhau: "12345",
+            matKhau,
         }
-        console.log('customer =>' + JSON.stringify(newCustomer));
-        Customer_Service.saveCustomer(newCustomer).then(() => {
-            alert('Thêm Mới Khách Hàng Thành Công!');
-            window.location.href = "/admin/customer/index";
+        console.log('customer =>' + JSON.stringify(customerUpdate));
+        ListCustomer();
+        for (let index = 0; index < customerList.length; index++) {
+            if (customerList[index].maKhachHang === maKhachHang) {
+                return alert('Mã Khách Hàng Này Đã Tồn Tại!');
+            }
+        }
+        Customer_Service.updateCustomer(customerUpdate, id).then((response) => {
+            if (response.status === 200) {
+                alert('Cập Nhật Thành Công!');
+                window.location.href = "/admin/customer/index";
+            }
         });
     }
     return (
@@ -60,11 +92,31 @@ export default function Create_Customer_Components() {
                 <main>
                     <div>
                         <div className="container">
-                            <h2 className="text-center">Add Customer</h2>
+                            <h2 className="text-center">Detail Customer</h2>
                             <div className="row">
                                 <div className="col-md-2 padd2"><Link className="btn btn-success" to="/Admin/Customer/index">Back</Link></div>
                             </div>
-                            <form className="col-md-10" id="myForm">
+                            <form className="col-md-10" id="myForm" onSubmit={updateCustomer}>
+                                <div className="row">
+                                    <div className="col-md-5">
+                                        <div className="row">
+                                            <label className="form-label">
+                                                Mã Khách Hàng
+                                            </label>
+                                            <input type="text" value={maKhachHang}
+                                                onChange={changeMa} className='form-control' />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-5">
+                                        <div className="row">
+                                            <label className="form-label">
+                                                Mật Khẩu
+                                            </label>
+                                            <input type="text" value={matKhau}
+                                                onChange={changeMatKhau} className='form-control' />
+                                        </div>
+                                    </div>
+                                </div>
                                 <div className="row">
                                     <div className="col-md-5">
                                         <div className="row">
@@ -140,7 +192,7 @@ export default function Create_Customer_Components() {
                                         <div className="row">
                                             <div className="col-md-5">
                                                 <br />
-                                                <button type="submit" className="btn btn-success" onClick={saveCustomer}>Save</button>
+                                                <button type="submit" className="btn btn-success" >Update</button>
                                             </div>
                                         </div>
                                     </div>
@@ -153,3 +205,5 @@ export default function Create_Customer_Components() {
         </>
     );
 }
+
+export default Customer_Detail_Components

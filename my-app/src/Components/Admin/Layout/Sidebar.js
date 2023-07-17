@@ -16,14 +16,14 @@ export default function Sidebar() {
         </Link>
         <ul className="side-menu top">
           <li className={value === "customer" ? "active" : ""}>
-            <Link to="/admin/customer" onClick={() => setValue("customer")}>
+            <Link to="/admin/customer/index" onClick={() => setValue("customer")}>
               <i class="bi bi-person-lines-fill"></i>
               <span className="text">Customer</span>
             </Link>
           </li>
           <li className={value === "appointment" ? "active" : ""}>
             <Link
-              to="/admin/appointment"
+              to="/admin/appointment/index"
               onClick={() => setValue("appiontment")}
             >
               <i class="bi bi-calendar"></i>
