@@ -19,8 +19,12 @@ export const APP_ROUTERS = {
     },
     APPOINTMENT: {
         INDEX: {
-            LABEL: 'QUAN LI LICH Hen',
+            LABEL: 'QUAN LI LICH HEN',
             VALUE: '/admin/appointment/index'
+        },
+        ADD: {
+            LABEL: 'QUAN LI LICH HEN',
+            VALUE: '/admin/appointment/add'
         },
     }
 }

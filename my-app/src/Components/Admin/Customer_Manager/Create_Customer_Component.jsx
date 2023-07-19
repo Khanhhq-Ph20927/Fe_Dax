@@ -4,37 +4,44 @@ import Sidebar from "../Layout/Sidebar";
 import Customer_Service from "../../../Api/Customer_Service";
 
 export default function Create_Customer_Components() {
-    const [customer, setCustomer] = useState([]);
+    // const [customer, setCustomer] = useState([]);
     const [ho, setHo] = useState('');
     const [ten, setTen] = useState('');
     const [email, setEmail] = useState('');
     const [sdt, setSdt] = useState('');
     const [diaChi, setDiaChi] = useState('');
     const [gioiTinh, setGioiTinh] = useState(true);
-    useEffect(() => {
-        ListCustomer();
-    }, [])
-    const ListCustomer = () => {
-        Customer_Service.getAllCustomer().then((response) => {
-            setCustomer(response.data);
-        }).catch((error) => { console.log(error); })
-            ;
-    }
+
+    // useEffect(() => {
+    //     ListCustomer();
+    // }, [])
+
+    // const ListCustomer = () => {
+    //     Customer_Service.getAllCustomer().then((response) => {
+    //         setCustomer(response.data);
+    //     }).catch((error) => { console.log(error); });
+    // }
+
     const changeHo = (e) => {
         setHo(e.target.value);
     }
+
     const changeTen = (e) => {
         setTen(e.target.value);
     }
+
     const changeEmail = (e) => {
         setEmail(e.target.value);
     }
+
     const changeSdt = (e) => {
         setSdt(e.target.value);
     }
+
     const changeDiaChi = (e) => {
         setDiaChi(e.target.value);
     }
+
     const saveCustomer = (e) => {
         e.preventDefault();
         let newCustomer = {
@@ -47,10 +54,15 @@ export default function Create_Customer_Components() {
             matKhau: "12345",
         }
         console.log('customer =>' + JSON.stringify(newCustomer));
-        Customer_Service.saveCustomer(newCustomer).then(() => {
-            alert('Thêm Mới Khách Hàng Thành Công!');
-            window.location.href = "/admin/customer/index";
-        });
+        Customer_Service.validate(newCustomer).then((response) => {
+            if (response.data === "ok")
+                Customer_Service.saveCustomer(newCustomer).then(() => {
+                    alert('Thêm Mới Khách Hàng Thành Công!');
+                    window.location.href = "/admin/customer/index";
+                });
+            else
+                alert(response.data);
+        })
     }
     return (
         <>

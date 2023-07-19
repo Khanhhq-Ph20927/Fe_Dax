@@ -1,11 +1,14 @@
 import { instance } from "./instance";
-const API = "khach-hang/";
+const API = "api/khach-hang/";
 class Customer_Service {
     getCustomer(number) {
         return instance.get(API + "index/" + number);
     }
     getAllCustomer() {
         return instance.get(API + "getAllCustomer");
+    }
+    validate(customer) {
+        return instance.post(API + "validate", customer);
     }
     getById(id) {
         return instance.get(API + "getById/" + id);
@@ -24,6 +27,9 @@ class Customer_Service {
     }
     searchByName(name, number) {
         return instance.get(API + "searchByName/" + name + "/" + number);
+    }
+    getMaxPage() {
+        return instance.get(API + "maxPage");
     }
 }
 

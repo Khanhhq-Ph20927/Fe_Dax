@@ -5,13 +5,16 @@ import Customer_Service from "../../../Api/Customer_Service";
 import Common_Util from "../../../Utils/Common_Util";
 import * as XLSX from 'xlsx/xlsx.mjs'
 
+
 export default function Customer_List_Components() {
     const [number, setNumber] = useState(0);
     const [pageData, setPageData] = useState([]);
     const [appointment, setAppointment] = useState([]);
     const [nameSearch, setNameSearch] = useState('');
+    const [maxPage, setMaxPage] = useState(0);
     useEffect(() => {
         fetchData();
+        totalPage();
     }, [number])
     const fetchData = async () => {
         try {
@@ -27,6 +30,11 @@ export default function Customer_List_Components() {
             console.log(response.data);
         })
     }
+    const totalPage = () => {
+        Customer_Service.getMaxPage().then((response) => {
+            setMaxPage(response.data);
+        })
+    }
     const handlePreviousPage = () => {
         if (number > 0) {
             setNumber((prevPageNumber) => prevPageNumber - 1);
@@ -35,6 +43,9 @@ export default function Customer_List_Components() {
 
     const handleNextPage = () => {
         setNumber((prevPageNumber) => prevPageNumber + 1);
+        if ((number + 1) === maxPage) {
+            setNumber(0);
+        }
     };
     const changeNameSearch = (e) => {
         setNameSearch(e.target.value);
@@ -47,8 +58,21 @@ export default function Customer_List_Components() {
     }
     const onchangeExport = async () => {
         const response = await Customer_Service.getCustomer(number);
-        const data = response.data.content;
-        await Common_Util.exportExcel(data, "Danh Sách Khách Hàng Trang " + (Number(number) + 1), "ListCustomer");
+        const customers = response.data.content;
+        const data = [
+            ['STT', 'Mã Khách Hàng', 'Họ', 'Tên', 'Email', 'Số Điện Thoại', 'Địa Chỉ', 'Giới Tính'],
+            ...customers.map((customer, index) => [
+                index + 1,
+                customer.maKhachHang,
+                customer.ho,
+                customer.ten,
+                customer.email,
+                customer.sdt,
+                customer.diaChi,
+                customer.gioiTinh ? "Nam" : "Nữ"
+            ]),
+        ];
+        await Common_Util.exportExcel(data, "Danh Sách Khách Hàng Trang " + (Number(number) + 1), "ListCustomer" + (Number(number) + 1));
     }
     const onchangeImport = async (e) => {
         const selectedFile = e.target.files[0];
@@ -60,13 +84,19 @@ export default function Customer_List_Components() {
             const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
             console.log(jsonData);
             if (window.confirm('Bạn Có Muốn Thêm Dữ Liệu Vào Hệ Thống!')) {
-                for (let index = 1; index < jsonData.length; index++) {
-                    const ho = jsonData[index][2];
-                    const ten = jsonData[index][3];
-                    const email = jsonData[index][4];
-                    const sdt = jsonData[index][5];
-                    const diaChi = jsonData[index][6];
-                    const gioiTinh = jsonData[index][7];
+                for (let index = 2; index < jsonData.length; index++) {
+                    const ho = jsonData[index] && jsonData[index][2];
+                    const ten = jsonData[index] && jsonData[index][3];
+                    const email = jsonData[index] && jsonData[index][4];
+                    const sdt = jsonData[index] && jsonData[index][5];
+                    const diaChi = jsonData[index] && jsonData[index][6];
+                    const gender = jsonData[index] && jsonData[index][7];
+                    var gioiTinh;
+                    if (gender === "Nam") {
+                        gioiTinh = true;
+                    } else {
+                        gioiTinh = false;
+                    }
                     const customer = {
                         ho,
                         ten,
@@ -75,6 +105,7 @@ export default function Customer_List_Components() {
                         diaChi,
                         gioiTinh
                     }
+                    console.log(customer);
                     Customer_Service.saveCustomer(customer).then((response) => {
                         if (response.status === 200) {
                             console.log("success");
@@ -174,7 +205,7 @@ export default function Customer_List_Components() {
                                                     <td>{customer.diaChi}</td>
                                                     <td>{customer.gioiTinh === true ? "Nam" : "Nữ"}</td>
                                                     <td><button className='btn btn-danger' onClick={() => deleteById(customer.id)}>Delete</button>
-                                                        <span className="padd"></span>
+                                                        <span className="padd2"></span>
                                                         <Link className='btn btn-success' to={`/admin/customer/detail/${customer.id}`}>Detail</Link>
                                                     </td>
                                                 </tr>
@@ -185,7 +216,7 @@ export default function Customer_List_Components() {
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination">
                                     <li className="page-item"><button className="page-link" onClick={handlePreviousPage}>Previous</button></li>
-                                    <li className="page-item"><button className="page-link" disabled>{number}</button></li>
+                                    <li className="page-item"><button className="page-link" disabled>{number + 1}</button></li>
                                     <li className="page-item"><button className="page-link" onClick={handleNextPage}>Next</button></li>
                                 </ul>
                             </nav>
