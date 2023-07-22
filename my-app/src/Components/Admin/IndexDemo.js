@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../../../css/admin.css";
 import { Link } from "react-router-dom";
-import { Sidebar } from "/Layout/Sidebar";
+import Sidebar from "/Layout/Sidebar";
 
 export default function IndexDV() {
   return (
@@ -17,7 +17,7 @@ export default function IndexDV() {
                 <i className="bx bx-search" />
                 <i className="bx bx-filter" />
                 <div>
-                  <Link to="/api/Admin/dichvu/add" className="btn btn-primary">
+                  <Link to="/admin/dichvu/add" className="btn btn-primary">
                     Add
                   </Link>
                 </div>
