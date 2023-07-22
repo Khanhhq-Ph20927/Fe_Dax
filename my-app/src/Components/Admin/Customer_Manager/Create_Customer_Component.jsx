@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Sidebar from "../Layout/Sidebar";
 import Customer_Service from "../../../Api/Customer_Service";
 
+
 export default function Create_Customer_Components() {
     // const [customer, setCustomer] = useState([]);
     const [ho, setHo] = useState('');
@@ -64,6 +65,7 @@ export default function Create_Customer_Components() {
                 alert(response.data);
         })
     }
+
     return (
         <>
             <Sidebar />

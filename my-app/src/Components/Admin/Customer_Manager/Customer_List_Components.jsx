@@ -5,13 +5,13 @@ import Customer_Service from "../../../Api/Customer_Service";
 import Common_Util from "../../../Utils/Common_Util";
 import * as XLSX from 'xlsx/xlsx.mjs'
 
-
 export default function Customer_List_Components() {
     const [number, setNumber] = useState(0);
     const [pageData, setPageData] = useState([]);
     const [appointment, setAppointment] = useState([]);
     const [nameSearch, setNameSearch] = useState('');
     const [maxPage, setMaxPage] = useState(0);
+
     useEffect(() => {
         fetchData();
         totalPage();
@@ -77,7 +77,9 @@ export default function Customer_List_Components() {
     const onchangeImport = async (e) => {
         const selectedFile = e.target.files[0];
         const fileReader = new FileReader();
-        fileReader.onload = (e) => {
+        let i = 0;
+        let y = 0;
+        fileReader.onload = async (e) => {
             const data = new Uint8Array(e.target.result);
             const workbook = XLSX.read(data, { type: 'array' });
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -106,6 +108,14 @@ export default function Customer_List_Components() {
                         gioiTinh
                     }
                     console.log(customer);
+                    const response = await Customer_Service.validate(customer);
+                    if (response.data === 'ok') {
+                        i++;
+                    } else {
+                        console.error(response.data);
+                        y++;
+                    }
+
                     Customer_Service.saveCustomer(customer).then((response) => {
                         if (response.status === 200) {
                             console.log("success");
@@ -116,6 +126,10 @@ export default function Customer_List_Components() {
                     });
                 }
             }
+            if (y === 0)
+                alert("Có " + i + " Bản Ghi Được Thêm Thành Công!");
+            else
+                alert("Có " + i + " Bản Ghi Được Thêm Thành Công Và " + y + " Bản Ghi Chưa Được Thêm!");
         };
         fileReader.readAsArrayBuffer(selectedFile);
     }

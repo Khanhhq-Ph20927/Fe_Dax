@@ -8,11 +8,20 @@ class Appointment_Service {
         return instance.post(API + "save", appointment);
     }
     deleteAppointment(id) {
-        return instance.post(API + "delete/" + id);
+        return instance.delete(API + "delete/" + id);
     }
     getMaxPage() {
         return instance.get(API + "maxPage");
     }
+    findByStatus(status, number) {
+        return instance.get(API + "filter/status/" + status + "/" + number);
+    }
+    findByType(type, number) {
+        return instance.get(API + "filter/type/" + type + "/" + number);
+    }
+    findByStatusAndType(status, type, number) {
+        return instance.get(API + "filter/" + status + "/" + type + "/" + number);
+    }
 }
 
-export default new Appointment_Service;
+export default new Appointment_Service();

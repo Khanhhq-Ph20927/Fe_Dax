@@ -8,42 +8,153 @@ import Common_Util from "../../../Utils/Common_Util";
 
 function Appointment_List_Components() {
     const [number, setNumber] = useState(0);
+    const [numberStatus, setNumberStatus] = useState(0);
+    const [numberType, setNumberType] = useState(0);
+    const [numberDouble, setNumberDouble] = useState(0);
     const [nameSearch, setNameSearch] = useState('');
     const [pageData, setPageData] = useState([]);
     const [maxPage, setMaxPage] = useState(0);
+    const [trangThai, setTrangThai] = useState(5);
+    const [loaiLichHen, setLoaiLichHen] = useState(0);
+    const [statusQuery, setStatusQuery] = useState(0);
+
     useEffect(() => {
         fetchData();
-        totalPage();
     }, [number]);
+
+    useEffect(() => {
+        fetchDataFilterByStatus();
+    }, [numberStatus]);
+
+    useEffect(() => {
+        fetchDataFilterByType();
+    }, [numberType]);
+
+    useEffect(() => {
+        fetchDataFilterByStatusAndType();
+    }, [numberDouble]);
+
+    // useEffect(() => {
+    //     if (trangThai == 5)
+    //         fetchData();
+    //     else
+    //         fetchDataFilterByStatus();
+    // }, [trangThai]);
+
+    // useEffect(() => {
+    //     if (loaiLichHen == 0) {
+    //         fetchData();
+    //     } else {
+    //         fetchDataFilterByType();
+    //     }
+    // }, [loaiLichHen]);
+
+    useEffect(() => {
+        if (loaiLichHen == 0 && trangThai == 5) {
+            fetchData();
+        }
+        else if (loaiLichHen != 0 && trangThai == 5) {
+            fetchDataFilterByType();
+        }
+        else if (loaiLichHen == 0 && trangThai != 5) {
+            fetchDataFilterByStatus();
+        }
+        else if (loaiLichHen != 0 && trangThai != 5) {
+            console.log(loaiLichHen, trangThai);
+            fetchDataFilterByStatusAndType();
+        }
+    }, [loaiLichHen, trangThai]);
+
     const fetchData = async () => {
         const response = await Appointment_Service.getAppointment(number);
         const data = response.data.content;
         setPageData(data);
-        console.log(data);
+        setStatusQuery(0);
+        setMaxPage(response.data.totalPages);
     }
-    const totalPage = () => {
-        Appointment_Service.getMaxPage().then((response) => {
-            setMaxPage(response.data);
-        })
+
+    const fetchDataFilterByStatus = async () => {
+        const response = await Appointment_Service.findByStatus(trangThai, numberStatus);
+        const data = response.data.content;
+        setPageData(data);
+        setStatusQuery(1);
+        setMaxPage(response.data.totalPages);
     }
+
+    const fetchDataFilterByType = async () => {
+        const response = await Appointment_Service.findByType(loaiLichHen, numberType);
+        const data = response.data.content;
+        setPageData(data);
+        setStatusQuery(2);
+        setMaxPage(response.data.totalPages);
+    }
+
+    const fetchDataFilterByStatusAndType = async () => {
+        const response = await Appointment_Service.findByStatusAndType(trangThai, loaiLichHen, numberDouble);
+        const data = response.data.content;
+        setPageData(data);
+        console.log(pageData);
+        setStatusQuery(3);
+        setMaxPage(response.data.totalPages);
+    }
+
     const handlePreviousPage = () => {
-        if (number > 0) {
-            setNumber((prevPageNumber) => prevPageNumber - 1);
+        if (statusQuery === 0) {
+            if (number > 0) {
+                setNumber((prevPageNumber) => prevPageNumber - 1);
+            }
+        }
+        if (statusQuery === 1) {
+            if (numberStatus > 0) {
+                setNumberStatus((prevPageNumber) => prevPageNumber - 1);
+            }
+        }
+        if (statusQuery === 2) {
+            if (numberType > 0) {
+                setNumberType((prevPageNumber) => prevPageNumber - 1);
+            }
         }
     };
 
+    const changeStatus = (e) => {
+        setTrangThai(e.target.value);
+    }
+
+    const changeType = (e) => {
+        setLoaiLichHen(e.target.value);
+    }
+
     const handleNextPage = () => {
-        setNumber((prevPageNumber) => prevPageNumber + 1);
-        if ((number + 1) === maxPage) {
-            setNumber(0);
+        if (statusQuery === 0) {
+            setNumber((prevPageNumber) => prevPageNumber + 1);
+            if ((number + 1) === maxPage) {
+                setNumber(0);
+            }
+        }
+        if (statusQuery === 1) {
+            setNumberStatus((prevPageNumber) => prevPageNumber + 1);
+            if ((numberStatus + 1) === maxPage) {
+                setNumberStatus(0);
+            }
+        }
+        if (statusQuery === 2) {
+            setNumberType((prevPageNumber) => prevPageNumber + 1);
+            if ((numberType + 1) === maxPage) {
+                setNumberType(0);
+            }
         }
     };
+
     const changeNameSearch = (e) => {
         setNameSearch(e.target.value);
+
     }
+
     const searchByName = (e) => {
 
     }
+
+
     const onchangeExport = async () => {
         const response = await Appointment_Service.getAppointment(number);
         const appointments = response.data.content;
@@ -76,6 +187,7 @@ function Appointment_List_Components() {
         ];
         await Common_Util.exportExcel(data, "Danh Sách Lịch Hẹn Trang " + (Number(number) + 1), "ListAppointmentPage" + (Number(number) + 1));
     }
+
     const onchangeImport = async (e) => {
         const selectedFile = e.target.files[0];
         const fileReader = new FileReader();
@@ -91,10 +203,11 @@ function Appointment_List_Components() {
     const deleteById = (id) => {
         if (window.confirm("Bạn Có Muốn Xoá! Nếu Đồng Ý , 1 Vài Dữ Liệu Liên Quan Sẽ Bị Xoá Theo!")) {
             Appointment_Service.deleteAppointment(id).then((res) => {
-                if (res.status === '200') {
+                if (res.data === true) {
                     alert("Xoá Thành Công!");
+                    fetchData();
                 } else {
-                    console.error(res.eror());
+                    console.error(res.data);
                 }
             })
         }
@@ -109,7 +222,6 @@ function Appointment_List_Components() {
                         <div className="order">
                             <div className="head">
                                 <h3>Lịch Hẹn</h3>
-                                <i className="bx bx-filter" />
                                 <div>
                                     <Link to="/Admin/Appointment/add" className="btn btn-primary">
                                         Add
@@ -124,11 +236,45 @@ function Appointment_List_Components() {
                                     <input className="form-control form-control-sm" id="formFileSm" accept=".xlsx" type="file" onChange={(e) => onchangeImport(e)} />
                                 </div>
                             </div>
-                            <div className="col-md-6">
-                                <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" value={nameSearch} onChange={changeNameSearch} />
-                                    <Link class="btn btn-outline-secondary" type="button" id="button-addon2" onClick={() => searchByName(nameSearch)}
-                                        to={nameSearch === '' ? `/admin/appointment/index` : `/admin/appointment/search/${nameSearch}`}><i class="bx bx-search"></i></Link>
+                            <div className="row">
+                                <div className="col-md-6">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" value={nameSearch} onChange={changeNameSearch} />
+                                        <Link class="btn btn-outline-secondary" type="button" id="button-addon2" onClick={() => searchByName(nameSearch)}
+                                            to={nameSearch === '' ? `/admin/appointment/index` : `/admin/appointment/search/${nameSearch}`}><i class="bx bx-search"></i></Link>
+                                    </div>
+                                </div>
+                                <div className="col-md-6">
+                                    <div className="row">
+                                        <div className="col-md-1">
+                                            <i class="bi bi-filter-left"></i>
+                                        </div>
+                                        <div className="col-md-4">
+                                            <div className="row">
+                                                <label className="form-label">
+                                                    Loại Lịch Hẹn
+                                                </label>
+                                                <select class="form-select" aria-label="Default select example" value={loaiLichHen} onChange={changeType}>
+                                                    <option selected value="0">Tất Cả</option>
+                                                    <option value="true">Online</option>
+                                                    <option value="false">Offline</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <label className="form-label">
+                                                Trạng Thái
+                                            </label>
+                                            <select class="form-select" aria-label="Default select example" value={trangThai} onChange={changeStatus}>
+                                                <option selected value="5">Tất Cả</option>
+                                                <option value="0">Chờ Xác Nhận</option>
+                                                <option value="1">Đã Xác Nhận</option>
+                                                <option value="2">Đã Hoàn Thành</option>
+                                                <option value="3">Quá Hẹn</option>
+                                                <option value="4">Đã Huỷ</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <table className="table table-striped">
@@ -182,7 +328,20 @@ function Appointment_List_Components() {
                             <nav aria-label="Page navigation example">
                                 <ul class="pagination">
                                     <li class="page-item"><button class="page-link" onClick={handlePreviousPage}>Previous</button></li>
-                                    <li class="page-item"><button class="page-link" disabled>{number + 1}</button></li>
+                                    <li class="page-item"><button class="page-link" disabled>{(() => {
+                                        switch (statusQuery) {
+                                            case 0:
+                                                return number + 1
+                                            case 1:
+                                                return numberStatus + 1
+                                            case 2:
+                                                return numberType + 1
+                                            case 3:
+                                                return numberDouble + 1
+                                            default:
+                                                return number + 1
+                                        }
+                                    })()}</button></li>
                                     <li class="page-item"><button class="page-link" onClick={handleNextPage}>Next</button></li>
                                 </ul>
                             </nav>

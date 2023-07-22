@@ -105,8 +105,7 @@ function Create_Appointment_Components() {
                                                 Trạng Thái
                                             </label>
                                             <select class="form-select" aria-label="Default select example" value={trangThai} onChange={changeStatus}>
-                                                <option selected>Open this select menu</option>
-                                                <option value="0">Chờ Xác Nhận</option>
+                                                <option value="0" selected>Chờ Xác Nhận</option>
                                                 <option value="1">Đã Xác Nhận</option>
                                                 <option value="2">Đã Hoàn Thành</option>
                                                 <option value="3">Quá Hẹn</option>
@@ -154,7 +153,7 @@ function Create_Appointment_Components() {
                                                 <option value="1 Giờ">1 Giờ</option>
                                                 <option value="2 Giờ">2 Giờ</option>
                                                 <option value="4 Giờ">4 Giờ</option>
-                                                <option value="0">Chưa Xác Định</option>
+                                                <option value="null">Chưa Xác Định</option>
                                             </select>
                                         </div>
                                     </div>
