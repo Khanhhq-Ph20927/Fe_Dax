@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "/Layout/Sidebar";
 
-
 export default function IndexDV() {
   return (
     <>
@@ -43,16 +42,12 @@ export default function IndexDV() {
                     <td>ABC</td>
                     <td>ABC</td>
                     <td>
-                      <Link
-                        className="btn btn-sm btn-secondary "
-                      >
-                        Edit
+                      <Link className="btn btn-sm btn-secondary ">
+                        <i class="bx bxs-edit"></i>
                       </Link>
                       <span className="padd"></span>
-                      <button
-                        className="btn btn-sm btn-danger "
-                      >
-                        Delete
+                      <button className="btn btn-sm btn-danger ">
+                        <i class="bx bxs-trash"></i>
                       </button>
                     </td>
                   </tr>
@@ -62,14 +57,14 @@ export default function IndexDV() {
                 <div className="inline-flex mt-2 mt-0">
                   <button
                     className="btn btn-sm btn-outline-secondary"
-                  // onClick={prevPage}
+                    // onClick={prevPage}
                   >
                     Prev
                   </button>
 
                   <button
                     className="btn btn-sm btn-outline-secondary"
-                  // onClick={nextPage}
+                    // onClick={nextPage}
                   >
                     Next
                   </button>
