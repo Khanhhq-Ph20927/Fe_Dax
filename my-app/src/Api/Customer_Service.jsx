@@ -31,6 +31,9 @@ class Customer_Service {
     getMaxPage() {
         return instance.get(API + "maxPage");
     }
+    validateFU(id, customer) {
+        return instance.post(API + "validateFormUpdate/" + id, customer);
+    }
 }
 
 export default new Customer_Service();

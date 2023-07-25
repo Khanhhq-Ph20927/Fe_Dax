@@ -14,6 +14,7 @@ import { APP_ROUTERS } from "./Contants";
 import Customer_List_Search_Components from "./Components/Admin/Customer_Manager/Customer_List_Search_Components";
 import Appointment_List_Components from "./Components/Admin/Appointment_Manager/Appointment_List_Components";
 import Create_Appointment_Components from "./Components/Admin/Appointment_Manager/Create_Appointment_Components";
+import Appointment_Detail_Components from "./Components/Admin/Appointment_Manager/Appointmet_Detail_Components";
 function App() {
   return (
     <div className="App">
@@ -32,6 +33,7 @@ function App() {
         <Route path={APP_ROUTERS.CUSTOMER.SEARCH.VALUE} element={<Customer_List_Search_Components />}></Route>
         <Route path={APP_ROUTERS.APPOINTMENT.INDEX.VALUE} element={<Appointment_List_Components />}></Route>
         <Route path={APP_ROUTERS.APPOINTMENT.ADD.VALUE} element={<Create_Appointment_Components />}></Route>
+        <Route path={APP_ROUTERS.APPOINTMENT.DETAIL.VALUE} element={<Appointment_Detail_Components />}></Route>
       </Routes>
     </div>
   );

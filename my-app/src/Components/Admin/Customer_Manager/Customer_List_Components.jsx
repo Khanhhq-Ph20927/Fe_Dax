@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import Sidebar from "../Layout/Sidebar";
 import Customer_Service from "../../../Api/Customer_Service";
 import Common_Util from "../../../Utils/Common_Util";
+import { Modal, Button } from "react-bootstrap";
+import Select from 'react-select';
+import makeAnimated from 'react-select/animated';
+import Province_Service from "../../../Api/Province_Service";
 import * as XLSX from 'xlsx/xlsx.mjs'
 
 export default function Customer_List_Components() {
@@ -10,7 +14,41 @@ export default function Customer_List_Components() {
     const [pageData, setPageData] = useState([]);
     const [appointment, setAppointment] = useState([]);
     const [nameSearch, setNameSearch] = useState('');
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [maxPage, setMaxPage] = useState(0);
+    const [showModal, setShowModal] = useState(false);
+    const [maKhachHang, setMaKhachHang] = useState('');
+    const [hoTen, setHoTen] = useState('');
+    const [email, setEmail] = useState('');
+    const [ttp, setTTP] = useState();
+    const [qh, setQH] = useState();
+    const [sdt, setSdt] = useState('');
+    const [gioiTinh, setGioiTinh] = useState(true);
+    const [matKhau, setMatKhau] = useState('');
+    const [province, setProvince] = useState([]);
+    const [districts, setDistricts] = useState([]);
+    const [selectedDistricts, setSelectedDistricts] = useState([]);
+    const [selectedProvince, setSelectedProvince] = useState(null);
+    const [ID, setID] = useState(null);
+
+    useEffect(() => {
+        customerDetail();
+        ListProvince();
+        ListDistricts();
+        getDistrictss();
+        getProvince();
+    }, [ID])
+
+    useEffect(() => {
+        getDistrictss();
+        getProvince();
+    }, [])
+
+    useEffect(() => {
+        getDistricts();
+    }, [selectedProvince]);
+
+    const animatedComponents = makeAnimated();
 
     useEffect(() => {
         fetchData();
@@ -23,12 +61,21 @@ export default function Customer_List_Components() {
             setPageData(data);
         } catch (error) { console.log(error); }
     };
+    const showCustomerDetailModal = (customer, id) => {
+        setSelectedCustomer(customer);
+        setShowModal(true);
+        setID(id);
+    };
     const ListAppoiment = (id) => {
-        console.log(id);
         Customer_Service.getAppointmentByCustomer(id).then((response) => {
             setAppointment(response.data);
             console.log(response.data);
         })
+    }
+    const myStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
     const totalPage = () => {
         Customer_Service.getMaxPage().then((response) => {
@@ -56,19 +103,123 @@ export default function Customer_List_Components() {
             return;
         }
     }
+    const customerDetail = async () => {
+        if (ID !== null) {
+            const response = await Customer_Service.getById(ID);
+            let customer = response.data;
+            setMaKhachHang(customer.maKhachHang);
+            setHoTen(customer.hoTen);
+            setTTP(customer.tinhThanhPho);
+            setQH(customer.quanHuyen);
+            setEmail(customer.email);
+            setSdt(customer.sdt);
+            setGioiTinh(customer.gioiTinh);
+        }
+    };
+
+    const ListProvince = () => new Promise(async (resolve, reject) => {
+        try {
+            const response = await Province_Service.getProvince();
+            setProvince(response);
+            resolve(response);
+        } catch (error) {
+            console.error(error);
+        }
+    });
+    const ListDistricts = () => new Promise(async (resolve, reject) => {
+        try {
+            const response = await Province_Service.getDistricts();
+            setDistricts(response);
+            resolve(response);
+        } catch (error) {
+            console.error(error);
+        }
+    });
+
+    const Provinces = province.map((pro) => ({
+        value: pro.code,
+        label: pro.name,
+
+    }));
+
+    const getDistricts = async () => {
+        if (selectedProvince === null) {
+            setSelectedDistricts(districts);
+        } else {
+            const response = await Province_Service.getDistrictsByCode(selectedProvince);
+            const data = response.districts;
+            setSelectedDistricts(data);
+        }
+    };
+    const Districtss = districts.map((dis) => ({
+        value: dis.name,
+        label: dis.name,
+
+    }));
+
+    const getProvince = () => {
+        for (let i = 0; i < province.length; i++) {
+            if (province[i].name === ttp) {
+                return { value: province[i].code, label: province[i].name };
+            }
+        }
+        return null;
+    }
+
+    const getDistrictss = () => {
+        for (let i = 0; i < districts.length; i++) {
+            if (districts[i].name === qh) {
+                return { value: districts[i].name, label: districts[i].name };
+            }
+        }
+        return null;
+    }
+
+    const Districtsss = selectedDistricts.map((dis) => ({
+        value: dis.name,
+        label: dis.name,
+
+    }));
+    const defaultValueDistricts = getDistrictss();
+    const defaultValueProvince = getProvince();
+
+    const changeMa = (e) => {
+        setMaKhachHang(e.target.value);
+    }
+    const changeName = (e) => {
+        setHoTen(e.target.value);
+    }
+    const changeEmail = (e) => {
+        setEmail(e.target.value);
+    }
+    const changeSdt = (e) => {
+        setSdt(e.target.value);
+    }
+    const changeMatKhau = (e) => {
+        setMatKhau(e.target.value);
+    }
+    const changeTTP = (selectedOptions) => {
+        setTTP(selectedOptions.label);
+        if (selectedOptions) {
+            setSelectedProvince(selectedOptions.value);
+        }
+    }
+    const changeQH = (selectedOptions) => {
+        setQH(selectedOptions.label);
+    }
     const onchangeExport = async () => {
         const response = await Customer_Service.getCustomer(number);
         const customers = response.data.content;
         const data = [
-            ['STT', 'Mã Khách Hàng', 'Họ', 'Tên', 'Email', 'Số Điện Thoại', 'Địa Chỉ', 'Giới Tính'],
+            ['STT', 'Mã Khách Hàng', 'Họ Tên', 'Email', 'Số Điện Thoại', 'Tỉnh, Thành Phố', "Quận, Huyện", 'Giới Tính'],
             ...customers.map((customer, index) => [
                 index + 1,
                 customer.maKhachHang,
-                customer.ho,
-                customer.ten,
+                customer.hoTen,
                 customer.email,
                 customer.sdt,
-                customer.diaChi,
+                customer.tinhThanhPho,
+                customer.quanHuyen,
                 customer.gioiTinh ? "Nam" : "Nữ"
             ]),
         ];
@@ -87,11 +238,11 @@ export default function Customer_List_Components() {
             console.log(jsonData);
             if (window.confirm('Bạn Có Muốn Thêm Dữ Liệu Vào Hệ Thống!')) {
                 for (let index = 2; index < jsonData.length; index++) {
-                    const ho = jsonData[index] && jsonData[index][2];
-                    const ten = jsonData[index] && jsonData[index][3];
-                    const email = jsonData[index] && jsonData[index][4];
-                    const sdt = jsonData[index] && jsonData[index][5];
-                    const diaChi = jsonData[index] && jsonData[index][6];
+                    const hoTen = jsonData[index] && jsonData[index][2];
+                    const email = jsonData[index] && jsonData[index][3];
+                    const sdt = jsonData[index] && jsonData[index][4];
+                    const tinhThanhPho = jsonData[index] && jsonData[index][5];
+                    const quanHuyen = jsonData[index] && jsonData[index][6];
                     const gender = jsonData[index] && jsonData[index][7];
                     var gioiTinh;
                     if (gender === "Nam") {
@@ -100,11 +251,11 @@ export default function Customer_List_Components() {
                         gioiTinh = false;
                     }
                     const customer = {
-                        ho,
-                        ten,
+                        hoTen,
                         email,
                         sdt,
-                        diaChi,
+                        tinhThanhPho,
+                        quanHuyen,
                         gioiTinh
                     }
                     console.log(customer);
@@ -159,6 +310,37 @@ export default function Customer_List_Components() {
             }
         }
     }
+    const updateCustomer = (e) => {
+        e.preventDefault();
+        let tinhThanhPho = ttp;
+        let quanHuyen = qh;
+        let customerUpdate = {
+            maKhachHang,
+            hoTen,
+            email,
+            sdt,
+            tinhThanhPho,
+            quanHuyen,
+            gioiTinh,
+            matKhau,
+        }
+        console.log('customer =>' + JSON.stringify(customerUpdate));
+        if (ID !== null) {
+            Customer_Service.validateFU(ID, customerUpdate).then((response) => {
+                if (response.data === "ok") {
+                    Customer_Service.updateCustomer(customerUpdate, ID).then((response) => {
+                        if (response.status === 200) {
+                            alert('Cập Nhật Thành Công!');
+                            setShowModal(false);
+                            fetchData();
+                        }
+                    });
+                } else {
+                    alert(response.data);
+                }
+            })
+        }
+    }
     return (
         <>
             <Sidebar />
@@ -196,8 +378,7 @@ export default function Customer_List_Components() {
                                     <tr>
                                         <th>STT</th>
                                         <th>Mã Khách Hàng</th>
-                                        <th>Họ</th>
-                                        <th>Tên</th>
+                                        <th>Họ Tên</th>
                                         <th>Email</th>
                                         <th>Số Điện Thoại</th>
                                         <th>Địa Chỉ</th>
@@ -212,23 +393,22 @@ export default function Customer_List_Components() {
                                                 <tr key={customer.id}>
                                                     <td>{index + 1}</td>
                                                     <td>{customer.maKhachHang}</td>
-                                                    <td>{customer.ho}</td>
-                                                    <td>{customer.ten}</td>
+                                                    <td>{customer.hoTen}</td>
                                                     <td>{customer.email}</td>
                                                     <td>{customer.sdt}</td>
-                                                    <td>{customer.diaChi}</td>
+                                                    <td>{customer.quanHuyen + ", " + customer.tinhThanhPho}</td>
                                                     <td>{customer.gioiTinh === true ? "Nam" : "Nữ"}</td>
                                                     <td><button className='btn btn-danger' onClick={() => deleteById(customer.id)}>Delete</button>
                                                         <span className="padd2"></span>
-                                                        <Link className='btn btn-success' to={`/admin/customer/detail/${customer.id}`}>Detail</Link>
+                                                        <Button className='btn btn-success' onClick={() => showCustomerDetailModal(customer, customer.id)}>Detail</Button>
                                                     </td>
                                                 </tr>
 
                                         )}
                                 </tbody>
                             </table>
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination">
+                            <nav aria-label="Page navigation example" style={myStyle}>
+                                <ul className="pagination">
                                     <li className="page-item"><button className="page-link" onClick={handlePreviousPage}>Previous</button></li>
                                     <li className="page-item"><button className="page-link" disabled>{number + 1}</button></li>
                                     <li className="page-item"><button className="page-link" onClick={handleNextPage}>Next</button></li>
@@ -238,6 +418,120 @@ export default function Customer_List_Components() {
                     </div>
                 </main>
                 {/* MAIN */}
+                <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" aria-labelledby="contained-modal-title-vcenter">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Chi tiết khách hàng</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {selectedCustomer && (
+                            <form className="col-md-12" id="myForm" onSubmit={updateCustomer}>
+                                <div className="row">
+                                    <div className="col-md-6 padd2">
+                                        <div className="row">
+                                            <label className="form-label">
+                                                Mã Khách Hàng
+                                            </label>
+                                            <input type="text" value={selectedCustomer.maKhachHang}
+                                                onChange={changeMa} className='form-control' />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6 padd2">
+                                        <div className="row">
+                                            <label className="form-label">
+                                                Mật Khẩu
+                                            </label>
+                                            <input type="text" value={matKhau}
+                                                onChange={changeMatKhau} className='form-control' />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6 padd2">
+                                        <div className="row">
+                                            <label className="form-label">
+                                                Họ Tên
+                                            </label>
+                                            <input type="text" value={selectedCustomer.hoTen}
+                                                onChange={changeName} className='form-control' />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6 padd2">
+                                        <div className="row">
+                                            <label className="form-label">
+                                                Giới Tính
+                                            </label>
+                                            <div className="form-check">
+                                                <input type="radio" className="form-check-input" value="true"
+                                                    checked={selectedCustomer.gioiTinh} onChange={() => setGioiTinh(true)} /> Nam
+                                            </div>
+                                            <div className="form-check">
+                                                <input type="radio" className="form-check-input" value="false"
+                                                    checked={!selectedCustomer.gioiTinh} onChange={() => setGioiTinh(false)} /> Nữ
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6 padd2">
+                                        <div className="row">
+                                            <label className="form-label">
+                                                Email
+                                            </label>
+                                            <input className="form-control" type="email" value={selectedCustomer.email}
+                                                onChange={changeEmail} />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6 padd2">
+                                        <div className="row">
+                                            <label className="form-label">
+                                                Số Điện Thoại
+                                            </label>
+                                            <input className="form-control" type="text" value={selectedCustomer.sdt}
+                                                onChange={changeSdt} />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-6 padd2">
+                                        <div className="row">
+                                            <label className="form-label padd3">
+                                                Tỉnh, Thành Phố
+                                            </label>
+                                            <Select
+                                                value={defaultValueProvince}
+                                                onChange={changeTTP}
+                                                closeMenuOnSelect={false}
+                                                components={animatedComponents}
+                                                options={Provinces}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="col-md-6 padd2">
+                                        <div className="row">
+                                            <label className="form-label padd3">
+                                                Quận Huyện
+                                            </label>
+                                            <Select
+                                                value={(defaultValueDistricts)}
+                                                onChange={changeQH}
+                                                closeMenuOnSelect={false}
+                                                components={animatedComponents}
+                                                options={selectedProvince === null ? Districtss : Districtsss}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="row">
+                                    <div className="col-md-12 d-flex justify-content-center mt-3">
+                                        <button type="submit" className="btn btn-success">Update</button>
+                                    </div>
+                                </div>
+                            </form>
+                        )}
+                    </Modal.Body>
+                    <Modal.Footer>
+                    </Modal.Footer>
+                </Modal>
             </section>
         </>
     );

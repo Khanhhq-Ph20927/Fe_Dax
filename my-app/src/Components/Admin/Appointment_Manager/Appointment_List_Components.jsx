@@ -11,6 +11,7 @@ function Appointment_List_Components() {
     const [numberStatus, setNumberStatus] = useState(0);
     const [numberType, setNumberType] = useState(0);
     const [numberDouble, setNumberDouble] = useState(0);
+    const [numberName, setNumberName] = useState(0);
     const [nameSearch, setNameSearch] = useState('');
     const [pageData, setPageData] = useState([]);
     const [maxPage, setMaxPage] = useState(0);
@@ -34,20 +35,19 @@ function Appointment_List_Components() {
         fetchDataFilterByStatusAndType();
     }, [numberDouble]);
 
-    // useEffect(() => {
-    //     if (trangThai == 5)
-    //         fetchData();
-    //     else
-    //         fetchDataFilterByStatus();
-    // }, [trangThai]);
+    useEffect(() => {
+        if (nameSearch != '')
+            fetchDataFilterByName();
+        else if (nameSearch === '')
+            fetchData();
+    }, [numberName]);
 
-    // useEffect(() => {
-    //     if (loaiLichHen == 0) {
-    //         fetchData();
-    //     } else {
-    //         fetchDataFilterByType();
-    //     }
-    // }, [loaiLichHen]);
+    useEffect(() => {
+        if (nameSearch != '')
+            fetchDataFilterByName();
+        else if (nameSearch === '')
+            fetchData();
+    }, [nameSearch]);
 
     useEffect(() => {
         if (loaiLichHen == 0 && trangThai == 5) {
@@ -98,6 +98,15 @@ function Appointment_List_Components() {
         setMaxPage(response.data.totalPages);
     }
 
+    const fetchDataFilterByName = async () => {
+        const response = await Appointment_Service.findByName(nameSearch, numberName);
+        const data = response.data.content;
+        setPageData(data);
+        console.log(pageData);
+        setStatusQuery(4);
+        setMaxPage(response.data.totalPages);
+    }
+
     const handlePreviousPage = () => {
         if (statusQuery === 0) {
             if (number > 0) {
@@ -112,6 +121,16 @@ function Appointment_List_Components() {
         if (statusQuery === 2) {
             if (numberType > 0) {
                 setNumberType((prevPageNumber) => prevPageNumber - 1);
+            }
+        }
+        if (statusQuery === 3) {
+            if (numberDouble > 0) {
+                setNumberDouble((prevPageNumber) => prevPageNumber - 1);
+            }
+        }
+        if (statusQuery === 4) {
+            if (numberName > 0) {
+                setNumberName((prevPageNumber) => prevPageNumber - 1);
             }
         }
     };
@@ -143,17 +162,30 @@ function Appointment_List_Components() {
                 setNumberType(0);
             }
         }
+        if (statusQuery === 3) {
+            setNumberDouble((prevPageNumber) => prevPageNumber + 1);
+            if ((numberDouble + 1) === maxPage) {
+                setNumberDouble(0);
+            }
+        }
+        if (statusQuery === 4) {
+            setNumberName((prevPageNumber) => prevPageNumber + 1);
+            if ((numberName + 1) === maxPage) {
+                setNumberName(0);
+            }
+        }
     };
 
     const changeNameSearch = (e) => {
         setNameSearch(e.target.value);
-
     }
 
-    const searchByName = (e) => {
-
+    const searchByName = () => {
+        if (nameSearch === '')
+            fetchData();
+        else
+            fetchDataFilterByName();
     }
-
 
     const onchangeExport = async () => {
         const response = await Appointment_Service.getAppointment(number);
@@ -238,10 +270,9 @@ function Appointment_List_Components() {
                             </div>
                             <div className="row">
                                 <div className="col-md-6">
-                                    <div class="input-group mb-3">
+                                    <div className="input-group mb-3">
                                         <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" value={nameSearch} onChange={changeNameSearch} />
-                                        <Link class="btn btn-outline-secondary" type="button" id="button-addon2" onClick={() => searchByName(nameSearch)}
-                                            to={nameSearch === '' ? `/admin/appointment/index` : `/admin/appointment/search/${nameSearch}`}><i class="bx bx-search"></i></Link>
+                                        <div className="btn btn-outline-secondary" type="button" onClick={() => searchByName()}><i className="bx bx-search"></i></div>
                                     </div>
                                 </div>
                                 <div className="col-md-6">
@@ -254,7 +285,7 @@ function Appointment_List_Components() {
                                                 <label className="form-label">
                                                     Loại Lịch Hẹn
                                                 </label>
-                                                <select class="form-select" aria-label="Default select example" value={loaiLichHen} onChange={changeType}>
+                                                <select className="form-select" aria-label="Default select example" value={loaiLichHen} onChange={changeType} >
                                                     <option selected value="0">Tất Cả</option>
                                                     <option value="true">Online</option>
                                                     <option value="false">Offline</option>
@@ -265,7 +296,7 @@ function Appointment_List_Components() {
                                             <label className="form-label">
                                                 Trạng Thái
                                             </label>
-                                            <select class="form-select" aria-label="Default select example" value={trangThai} onChange={changeStatus}>
+                                            <select className="form-select" aria-label="Default select example" value={trangThai} onChange={changeStatus}>
                                                 <option selected value="5">Tất Cả</option>
                                                 <option value="0">Chờ Xác Nhận</option>
                                                 <option value="1">Đã Xác Nhận</option>
@@ -319,16 +350,16 @@ function Appointment_List_Components() {
                                                     <td>{appoint.loaiLichHen ? "Online" : "Offline"}</td>
                                                     <td><button className='btn btn-danger' onClick={() => deleteById(appoint.id)}>Delete</button>
                                                         <span className="padd2"></span>
-                                                        <Link className='btn btn-success' to={``}>Detail</Link>
+                                                        <Link className='btn btn-success' to={`/admin/appointment/detail/${appoint.id}`}>Detail</Link>
                                                     </td>
                                                 </tr>
                                         )}
                                 </tbody>
                             </table>
                             <nav aria-label="Page navigation example">
-                                <ul class="pagination">
-                                    <li class="page-item"><button class="page-link" onClick={handlePreviousPage}>Previous</button></li>
-                                    <li class="page-item"><button class="page-link" disabled>{(() => {
+                                <ul className="pagination">
+                                    <li className="page-item"><button class="page-link" onClick={handlePreviousPage}>Previous</button></li>
+                                    <li className="page-item"><button class="page-link" disabled>{(() => {
                                         switch (statusQuery) {
                                             case 0:
                                                 return number + 1
@@ -338,11 +369,13 @@ function Appointment_List_Components() {
                                                 return numberType + 1
                                             case 3:
                                                 return numberDouble + 1
+                                            case 4:
+                                                return numberName + 1
                                             default:
                                                 return number + 1
                                         }
                                     })()}</button></li>
-                                    <li class="page-item"><button class="page-link" onClick={handleNextPage}>Next</button></li>
+                                    <li className="page-item"><button class="page-link" onClick={handleNextPage}>Next</button></li>
                                 </ul>
                             </nav>
                         </div>

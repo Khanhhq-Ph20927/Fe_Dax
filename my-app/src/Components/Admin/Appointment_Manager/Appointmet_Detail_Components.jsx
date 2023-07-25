@@ -1,30 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Sidebar from "../Layout/Sidebar";
 import Customer_Service from "../../../Api/Customer_Service";
 import Appointment_Service from "../../../Api/Appointment_Service";
+import moment from 'moment';
 
-
-function Create_Appointment_Components() {
+function Appointment_Detail_Components() {
+    const { id } = useParams();
     const [gioDat, setGioDat] = useState('');
     const [ngayDat, setNgayDat] = useState('');
     const [trangThai, setTrangThai] = useState(1);
     const [loaiLichHen, setLoaiLichHen] = useState(true);
     const [sdt, setSdt] = useState('');
-    const [thoiGianDuKien, setThoiGianDuKien] = useState(0);
+    const [thoiGianDuKien, setThoiGianDuKien] = useState('');
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [customer, setCustomer] = useState([]);
-
     useEffect(() => {
+        Appointment_Service.getById(id).then((response) => {
+            let appointment = response.data;
+            setGioDat(moment(appointment.thoiGianDat).format('HH:mm:ss'));
+            setNgayDat(moment(appointment.thoiGianDat).format('YYYY-MM-DD'));
+            setTrangThai(appointment.trangThai);
+            setLoaiLichHen(appointment.loaiLichHen);
+            setSdt(appointment.sdt);
+            setThoiGianDuKien(appointment.thoiGianDuKien);
+            setSelectedCustomer(appointment.kh.id);
+            console.log(appointment);
+        });
         ListCustomer();
-    }, [])
+    }, [id])
     const ListCustomer = () => {
         Customer_Service.getAllCustomer().then((response) => {
             setCustomer(response.data);
             console.log(customer);
         }).catch((error) => console.log(error));
     }
-
     const changeHour = (e) => {
         setGioDat(e.target.value);
     }
@@ -43,7 +53,7 @@ function Create_Appointment_Components() {
     const changeCustomer = (e) => {
         setSelectedCustomer(e.target.value);
     }
-    const saveCustomer = (e) => {
+    const updateCustomer = (e) => {
         e.preventDefault();
         var thoiGianDat = ngayDat + "T" + gioDat;
         let appointment = {
@@ -55,30 +65,20 @@ function Create_Appointment_Components() {
             kh: { id: selectedCustomer }
         }
         console.log('appointment =>' + JSON.stringify(appointment));
-        if (ngayDat === '' || gioDat === '') {
-            alert("Hãy Chọn Thời Gian Đặt Lịch Hẹn!");
-        } else if (selectedCustomer === null) {
-            alert("Hãy Chọn Khách Hàng Đặt Lịch Hẹn!");
-        }
-        else if (thoiGianDuKien === "0") {
-            alert("Hãy Chọn Thời Gian Dự Kiến!");
-        }
-        else {
-            Appointment_Service.validate(appointment).then((respose) => {
-                if (respose.data === "ok") {
-                    Appointment_Service.saveAppointment(appointment).then((res) => {
-                        if (res.status === 200) {
-                            alert("Thêm Lịch Hẹn Thành Công!");
-                            window.location = "/admin/appointment/index";
-                        } else {
-                            console.log(res.error);
-                        }
-                    })
-                } else {
-                    alert(respose.data);
-                }
-            })
-        }
+        Appointment_Service.validateFU(appointment).then((respose) => {
+            if (respose.data === "ok") {
+                Appointment_Service.update(id, appointment).then((res) => {
+                    if (res.status === 200) {
+                        alert("Sửa Thành Công!");
+                        window.location = "/admin/appointment/index";
+                    } else {
+                        console.log(res.error);
+                    }
+                })
+            } else {
+                alert(respose.data);
+            }
+        })
     }
     return (
         <>
@@ -201,7 +201,7 @@ function Create_Appointment_Components() {
                                         <div className="row">
                                             <div className="col-md-5">
                                                 <br />
-                                                <button type="submit" className="btn btn-success" onClick={saveCustomer}>Save</button>
+                                                <button type="submit" className="btn btn-success" onClick={updateCustomer}>Update</button>
                                             </div>
                                         </div>
                                     </div>
@@ -215,4 +215,4 @@ function Create_Appointment_Components() {
     );
 }
 
-export default Create_Appointment_Components
+export default Appointment_Detail_Components

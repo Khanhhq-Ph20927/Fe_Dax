@@ -26,5 +26,9 @@ export const APP_ROUTERS = {
             LABEL: 'QUAN LI LICH HEN',
             VALUE: '/admin/appointment/add'
         },
+        DETAIL: {
+            LABEL: 'QUAN LI LICH HEN',
+            VALUE: '/admin/appointment/detail/:id'
+        },
     }
 }

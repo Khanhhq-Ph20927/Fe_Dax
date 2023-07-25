@@ -1,8 +1,22 @@
 import { instance } from "./instance";
+
 const API = "api/lich-hen/";
+
 class Appointment_Service {
     getAppointment(number) {
         return instance.get(API + "index/" + number);
+    }
+    getById(id) {
+        return instance.get(API + "getById/" + id);
+    }
+    validate(appointment) {
+        return instance.post(API + "validate", appointment);
+    }
+    validateFU(appointment) {
+        return instance.post(API + "validateFormUpdate", appointment);
+    }
+    update(id, appointment) {
+        return instance.put(API + "update/" + id, appointment);
     }
     saveAppointment(appointment) {
         return instance.post(API + "save", appointment);
@@ -21,6 +35,9 @@ class Appointment_Service {
     }
     findByStatusAndType(status, type, number) {
         return instance.get(API + "filter/" + status + "/" + type + "/" + number);
+    }
+    findByName(keyword, number) {
+        return instance.get(API + "filter/name/" + keyword + "/" + number);
     }
 }
 

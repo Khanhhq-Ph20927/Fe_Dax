@@ -8,10 +8,13 @@ function Customer_List_Search_Components() {
     const [number, setNumber] = useState(0);
     const [pageData, setPageData] = useState([]);
     const [appointment, setAppointment] = useState([]);
+    const [maxPage, setMaxPage] = useState(0);
     useEffect(() => {
         Customer_Service.searchByName(name, number).then((response) => {
             setPageData(response.data.content);
-            console.log(pageData);
+            console.log(response.data.totalPages);
+            console.log(response.data);
+            setMaxPage(response.data.totalPages);
         });
     }, [number])
     const fetchData = async () => {
@@ -36,6 +39,9 @@ function Customer_List_Search_Components() {
 
     const handleNextPage = () => {
         setNumber((prevPageNumber) => prevPageNumber + 1);
+        if ((number + 1) === maxPage) {
+            setNumber(0);
+        }
     };
     const deleteById = (id) => {
         ListAppoiment(id);
@@ -108,7 +114,7 @@ function Customer_List_Search_Components() {
                                                     <td>{customer.diaChi}</td>
                                                     <td>{customer.gioiTinh === true ? "Nam" : "Nữ"}</td>
                                                     <td><button className='btn btn-danger' onClick={() => deleteById(customer.id)}>Delete</button>
-                                                        <span className="padd"></span>
+                                                        <span className="padd2"></span>
                                                         <Link className='btn btn-success' to={`/admin/customer/detail/${customer.id}`}>Detail</Link>
                                                     </td>
                                                 </tr>
