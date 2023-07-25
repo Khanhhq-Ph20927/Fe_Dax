@@ -29,7 +29,6 @@ function App() {
         <Route path="/contact" element={<Contact />}></Route>
         <Route path={APP_ROUTERS.CUSTOMER.ADD.VALUE} element={<Create_Customer_Components />}></Route>
         <Route path={APP_ROUTERS.CUSTOMER.INDEX.VALUE} element={<Customer_List_Components />}></Route>
-        <Route path={APP_ROUTERS.CUSTOMER.DETAIL.VALUE} element={<Customer_Detail_Components />}></Route>
         <Route path={APP_ROUTERS.CUSTOMER.SEARCH.VALUE} element={<Customer_List_Search_Components />}></Route>
         <Route path={APP_ROUTERS.APPOINTMENT.INDEX.VALUE} element={<Appointment_List_Components />}></Route>
         <Route path={APP_ROUTERS.APPOINTMENT.ADD.VALUE} element={<Create_Appointment_Components />}></Route>
