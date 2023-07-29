@@ -9,7 +9,7 @@ export default function IndexDV() {
       <section id="content">
         {/* MAIN */}
         <main>
-          <div className="table-data container">
+          <div className="table-data">
             <div className="order">
               <div className="head">
                 <h3>Dịch vụ</h3>
