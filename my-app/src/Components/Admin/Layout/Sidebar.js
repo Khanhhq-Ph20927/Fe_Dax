@@ -31,15 +31,23 @@ export default function Sidebar() {
             </Link>
           </li>
           <li>
-            <Link to="#">
-              <i className="bx bxs-doughnut-chart" />
-              <span className="text">Analytics</span>
+            <Link
+              className={value === "dichvu" ? "active" : ""}
+              to="/admin/dichvu/index"
+              onClick={() => setValue("dichvu")}
+            >
+              <i class="bx bxs-cog"></i>
+              <span className="text">Dịch vụ</span>
             </Link>
           </li>
           <li>
-            <Link to="#">
-              <i className="bx bxs-message-dots" />
-              <span className="text">Message</span>
+            <Link
+              className={value === "loaidichvu" ? "active" : ""}
+              to="/admin/loaidichvu/index"
+              onClick={() => setValue("loaidichvu")}
+            >
+              <i class="bx bxs-data"></i>
+              <span className="text">Loại dịch vụ</span>
             </Link>
           </li>
           <li>
