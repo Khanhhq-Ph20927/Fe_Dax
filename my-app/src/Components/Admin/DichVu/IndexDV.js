@@ -151,8 +151,8 @@ export default function IndexDV() {
     DichVu_Api.delete(getId)
       .then((res) => {
         setConfrimDeleted(false);
-        toast.success("Delete thành Công");
         fetchData();
+        toast.success("Delete thành Công");
         // window.location.href = "/admin/dichvu/index";
       })
       .catch((error) => {
@@ -214,7 +214,7 @@ export default function IndexDV() {
       console.log(error);
     }
   };
-  ///////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     ListLoaiDV();
     DichVu_Api.detail(getId).then((res) => {

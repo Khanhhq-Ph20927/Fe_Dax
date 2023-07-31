@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import LoaiDichVu_Api from "../../../Api/LoaiDichVu_Api";
 import { toast } from "react-toastify";
 import { Button, Modal } from "react-bootstrap";
-import "react-toastify/dist/ReactToastify.css";
+
 export default function AddDV() {
   const [ten, setTen] = useState("");
   const [donGia, setDonGia] = useState("");
@@ -40,29 +40,6 @@ export default function AddDV() {
         console.log(error);
       });
   };
-  // const LoaiDV = loaiDV.map((pro) => ({
-  //   value: pro.code,
-  //   label: pro.name,
-  // }));
-
-  // const getLoaiDV = async () => {
-  //   if (selectedLoai === null) {
-  //     setSelectedLoai(LoaiDV);
-  //   } else {
-  //     const response = await LoaiDichVu_Api.detail(selectedLoai);
-  //     const data = response.LoaiDV;
-  //     setSelectedLoai(data);
-  //   }
-  // };
-  // const Districtss = districts.map((dis) => ({
-  //   value: dis.code,
-  //   label: dis.name,
-  // }));
-
-  // const Districtsss = selectedDistricts.map((dis) => ({
-  //   value: dis.code,
-  //   label: dis.name,
-  // }));
 
   const changeTen = (e) => {
     setTen(e.target.value);
