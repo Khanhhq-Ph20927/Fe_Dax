@@ -1,5 +1,5 @@
 import { instance } from "./instance";
-const API_URL = "/api/Admin/loaidichvu/";
+const API_URL = "api/Admin/loaidichvu/";
 class LoaiDichVu_Api {
   getAll() {
     return instance.get(API_URL + "index");
