@@ -217,13 +217,17 @@ export default function IndexDV() {
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
     ListLoaiDV();
-    DichVu_Api.detail(getId).then((res) => {
-      let dichvu = res.data;
-      setTen(dichvu.ten);
-      setDonGia(dichvu.donGia);
-      // setSelectedPhuKien(voucher.phuKien.id);
-      setSelectedLoaiDV(dichvu.loaiDV.id);
-    });
+    DichVu_Api.detail(getId)
+      .then((res) => {
+        let dichvu = res.data;
+        setTen(dichvu.ten);
+        setDonGia(dichvu.donGia);
+        // setSelectedPhuKien(voucher.phuKien.id);
+        setSelectedLoaiDV(dichvu.loaiDV.id);
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+      });
   }, [getId]);
   const saveDV = (e) => {
     e.preventDefault();
