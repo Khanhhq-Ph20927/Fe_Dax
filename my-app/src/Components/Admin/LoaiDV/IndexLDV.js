@@ -137,10 +137,14 @@ export default function IndexLDV() {
   };
   ///////////////////////////////////////////
   useEffect(() => {
-    LoaiDichVu_Api.detail(getId).then((res) => {
-      let loaidichvu = res.data;
-      setTen(loaidichvu.ten);
-    });
+    LoaiDichVu_Api.detail(getId)
+      .then((res) => {
+        let loaidichvu = res.data;
+        setTen(loaidichvu.ten);
+      })
+      .catch((error) => {
+        console.log("Error: ", error);
+      });
   }, [getId]);
   const saveDV = (e) => {
     e.preventDefault();
@@ -191,8 +195,8 @@ export default function IndexLDV() {
                       onClick={() => searchByName(SearchTen)}
                       to={
                         SearchTen === ""
-                          ? `/admin/dichvu/index`
-                          : `/admin/dichvu/index/search_ten/${SearchTen}`
+                          ? `/admin/loaidichvu/index`
+                          : `/admin/loaidichvu/index/search_ten/${SearchTen}`
                       }
                     >
                       <i class="bx bx-search"></i>

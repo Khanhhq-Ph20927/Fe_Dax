@@ -21,7 +21,7 @@ export default function IndexDV() {
   const [pageNumber, setPageNumber] = useState(0);
   const [SearchTen, setSearchTen] = useState("");
   const [SearchPhuKien, setSearchPhuKien] = useState("");
-  const [SearchLoaiDV, setSearchLoaiDV] = useState("");
+  const [SearchLoaiDV, setSearchLoaiDV] = useState(0);
   const [SearchMin, setSearchMin] = useState("");
   const [SearchMax, setSearchMax] = useState("");
   const [numberName, setNumberName] = useState(0);
@@ -77,20 +77,20 @@ export default function IndexDV() {
   //   ListLoaiDV();
   // }, [pageNumber]);
   useEffect(() => {
-    if (SearchTen == "" && selectedLoaiDV == 0) {
+    if (SearchTen == "" && SearchLoaiDV == 0) {
       fetchData();
-      console.log(SearchTen, selectedLoaiDV);
-    } else if (SearchTen != "" && selectedLoaiDV == 0) {
-      console.log(SearchTen, selectedLoaiDV);
+      console.log(SearchTen, SearchLoaiDV);
+    } else if (SearchTen != "" && SearchLoaiDV == 0) {
+      console.log(SearchTen, SearchLoaiDV);
       fetchDataFilterByName();
-    } else if (SearchTen == "" && selectedLoaiDV != 0) {
-      console.log(SearchTen, selectedLoaiDV);
-      // fetchDataFilterByLoaiDV();
-    } else if (SearchTen != "" && selectedLoaiDV != 0) {
-      console.log(SearchTen, selectedLoaiDV);
+    } else if (SearchTen == "" && SearchLoaiDV != 0) {
+      console.log(SearchTen, SearchLoaiDV);
+      fetchDataFilterByLoaiDV();
+    } else if (SearchTen != "" && SearchLoaiDV != 0) {
+      console.log(SearchTen, SearchLoaiDV);
       // fetchDataFilterByStatusAndType();
     }
-  }, [SearchTen, loaiDV]);
+  }, [SearchTen, SearchLoaiDV]);
   const fetchData = async () => {
     try {
       const response = await DichVu_Api.paging(pageNumber);
@@ -104,28 +104,39 @@ export default function IndexDV() {
     }
   };
   const fetchDataFilterByName = async () => {
-    // try {
-    //   const response = await DichVu_Api.search_ten(SearchTen, pageNumber);
-    //   const data = response.data.content;
-    //   setListDichVu(data);
-    //   setStatusQuery(1);
-    //   setMaxPage(response.data.totalPages);
-    // } catch (error) {
-    //   console.log(error);
-    // }
-    searchByName();
+    // searchByName(SearchTen);
+    try {
+      const response = await DichVu_Api.search_ten(SearchTen, pageNumber);
+      const data = response.data.content;
+      setListDichVu(data);
+      setStatusQuery(1);
+      setMaxPage(response.data.totalPages);
+    } catch (error) {
+      console.log(error);
+    }
   };
-  // const fetchDataFilterByLoaiDV = async () => {
+  // const searchByName = async (e) => {
   //   try {
-  //     const response = await DichVu_Api.Search_loai(loaiDV, pageNumber);
+  //     const response = await DichVu_Api.search_ten(SearchTen, pageNumber);
   //     const data = response.data.content;
   //     setListDichVu(data);
-  //     setStatusQuery(2);
+  //     setStatusQuery(1);
   //     setMaxPage(response.data.totalPages);
   //   } catch (error) {
   //     console.log(error);
   //   }
   // };
+  const fetchDataFilterByLoaiDV = async () => {
+    try {
+      const response = await DichVu_Api.search_loai(SearchLoaiDV, pageNumber);
+      const data = response.data.content;
+      setListDichVu(data);
+      setStatusQuery(2);
+      setMaxPage(response.data.totalPages);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // const fetchDataFilterByNameAndLoaiDV = async () => {
   //   try {
   //     const response = await DichVu_Api.Search(loaiDV, pageNumber);
@@ -201,18 +212,7 @@ export default function IndexDV() {
     setSearchTen(e.target.value);
   };
   const changeSearchLoaiDV = (e) => {
-    setSelectedLoaiDV(e.target.value);
-  };
-  const searchByName = async (e) => {
-    try {
-      const response = await DichVu_Api.search_ten(SearchTen, pageNumber);
-      const data = response.data.content;
-      setListDichVu(data);
-      setStatusQuery(1);
-      setMaxPage(response.data.totalPages);
-    } catch (error) {
-      console.log(error);
-    }
+    setSearchLoaiDV(e.target.value);
   };
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
@@ -276,7 +276,6 @@ export default function IndexDV() {
                       type="text"
                       className="form-control"
                       placeholder="Search"
-                      s
                       value={SearchTen}
                       onChange={changeSearchTen}
                     />
@@ -284,7 +283,7 @@ export default function IndexDV() {
                   <div className="col-2">
                     <Link
                       className="btn btn-outline-primary"
-                      onClick={() => searchByName(SearchTen)}
+                      onClick={() => fetchDataFilterByName(SearchTen)}
                       to={
                         SearchTen === ""
                           ? `/admin/dichvu/index`
@@ -303,7 +302,7 @@ export default function IndexDV() {
                 <div className="col-2">
                   <select
                     class="form-select"
-                    value={selectedLoaiDV || ""}
+                    value={SearchLoaiDV || 0}
                     onChange={changeSearchLoaiDV}
                   >
                     <option value={0}>Loại DV</option>
@@ -318,14 +317,28 @@ export default function IndexDV() {
                   <div className="col-6">
                     <select class="form-select">
                       <option value={0}>Giá Min</option>
-                      <option></option>
+                      {ListDV.map((l) => (
+                        <option key={l.donGia} value={l.donGia}>
+                          {Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(l.donGia)}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <span className="padd"></span>
                   <div className="col-6">
                     <select class="form-select">
                       <option value={0}>Giá Max</option>
-                      <option></option>
+                      {ListDV.map((l) => (
+                        <option key={l.donGia} value={l.donGia}>
+                          {Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(l.donGia)}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>

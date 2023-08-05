@@ -59,6 +59,10 @@ export const APP_ROUTERS = {
       LABEL: "QUAN LI DICH VU",
       VALUE: "admin/loaidichvu/index/search/:ten",
     },
+    SEARCH_TEN2: {
+      LABEL: "QUAN LI DICH VU",
+      VALUE: "admin/loaidichvu/index/search_ten/:ten/:number",
+    },
     SORT: {
       LABEL: "QUAN LI DICH VU",
       VALUE: "admin/loaidichvu/index/sort/:field",

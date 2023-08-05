@@ -14,7 +14,8 @@ import AddDV from "./Components/Admin/DichVu/AddDV";
 import UpdateLDV from "./Components/Admin/LoaiDV/UpdateLDV";
 import IndexLDV from "./Components/Admin/LoaiDV/IndexLDV";
 import AddLDV from "./Components/Admin/LoaiDV/AddLDV";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <div className="App">
@@ -50,6 +51,10 @@ function App() {
           element={<IndexLDV />}
         ></Route>
         <Route
+          path={APP_ROUTERS.LoaiDichVu.SEARCH_TEN2.VALUE}
+          element={<IndexLDV />}
+        ></Route>
+        <Route
           path={APP_ROUTERS.LoaiDichVu.ADD.VALUE}
           element={<AddLDV />}
         ></Route>
@@ -62,6 +67,7 @@ function App() {
           element={<IndexLDV />}
         ></Route>
       </Routes>
+      <ToastContainer />
     </div>
   );
 }

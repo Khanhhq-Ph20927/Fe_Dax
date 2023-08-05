@@ -68,8 +68,8 @@ export default function AddDV() {
         toast.success("Add thành Công");
         // window.location.href = "/admin/dichvu/index";
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((err) => {
+        console.log(err);
         toast.error("Add không thành Công");
       });
   };
@@ -128,7 +128,6 @@ export default function AddDV() {
                     <div className="col-6">
                       <a
                         type="submit"
-                        // onClick={saveDV}
                         onClick={handleShow}
                         className="btn btn-secondary form-control"
                       >

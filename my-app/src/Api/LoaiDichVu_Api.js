@@ -4,6 +4,12 @@ class LoaiDichVu_Api {
   getAll() {
     return instance.get(API_URL + "index");
   }
+  paging(number) {
+    return instance.get(API_URL + "index/page/" + number);
+  }
+  search_ten(ten, number) {
+    return instance.get(API_URL + "index/search_ten/" + ten + "/" + number);
+  }
   save(LoaiDichVu) {
     return instance.post(API_URL + "add", LoaiDichVu);
   }
@@ -15,9 +21,6 @@ class LoaiDichVu_Api {
   }
   update(id, LoaiDichVu) {
     return instance.put(API_URL + "update/" + id, LoaiDichVu);
-  }
-  paging(number) {
-    return instance.get(API_URL + "index/page/" + number);
   }
 }
 export default new LoaiDichVu_Api();
