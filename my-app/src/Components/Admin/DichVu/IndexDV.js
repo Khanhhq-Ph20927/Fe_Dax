@@ -12,7 +12,7 @@ export default function IndexDV() {
   const [ListDV, setListDichVu] = useState([]);
   const [getId, setId] = useState("");
   const [ten, setTen] = useState("");
-  const [ngayTao, setNgayTao] = useState("");
+  // const [ngayTao, setNgayTao] = useState("");
   const [donGia, setDonGia] = useState(true);
   const [phuKien, setPhuKien] = useState([]);
   const [selectedPhuKien, setSelectedPhuKien] = useState(null);
@@ -192,19 +192,19 @@ export default function IndexDV() {
     if (statusQuery === 0) {
       setPageNumber((prevPageNumber) => prevPageNumber + 1);
       if (pageNumber + 1 === maxPage) {
-        setPageNumber(0);
+        setPageNumber(pageNumber);
       }
     }
     if (statusQuery === 1) {
       setNumberName((prevPageNumber) => prevPageNumber + 1);
       if (numberName + 1 === maxPage) {
-        setNumberName(0);
+        setNumberName(pageNumber);
       }
     }
     if (statusQuery === 2) {
       setNumberLoaiDV((prevPageNumber) => prevPageNumber + 1);
       if (numberLoaiDV + 1 === maxPage) {
-        setNumberLoaiDV(0);
+        setNumberLoaiDV(pageNumber);
       }
     }
   };
@@ -355,10 +355,30 @@ export default function IndexDV() {
                 <thead>
                   <tr>
                     <th>STT</th>
-                    <th>Tên</th>
-                    <th>Phụ Kiện</th>
-                    <th>Loại dịch vụ</th>
-                    <th>Đơn Giá</th>
+                    <th>
+                      Tên dịch vụ<span className="padd"></span>
+                      <Link>
+                        <i class="bx bx-sort"></i>
+                      </Link>
+                    </th>
+                    <th>
+                      Phụ Kiện <span className="padd"></span>
+                      <Link>
+                        <i class="bx bx-sort"></i>
+                      </Link>
+                    </th>
+                    <th>
+                      Loại dịch vụ <span className="padd"></span>
+                      <Link>
+                        <i class="bx bx-sort"></i>
+                      </Link>
+                    </th>
+                    <th>
+                      Đơn Giá <span className="padd"></span>
+                      <Link>
+                        <i class="bx bx-sort"></i>
+                      </Link>
+                    </th>
                     <th>Action</th>
                   </tr>
                 </thead>

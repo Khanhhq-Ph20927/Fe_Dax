@@ -99,6 +99,7 @@ export default function AddDV() {
                     <input
                       type="text"
                       className="form-control"
+                      data-type="currency"
                       value={donGia}
                       onChange={changeDonGia}
                     />
