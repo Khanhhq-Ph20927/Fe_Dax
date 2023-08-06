@@ -385,9 +385,7 @@ export default function IndexDV() {
                 <tbody>
                   {ListDV.map((dv, index) => (
                     <tr>
-                      {/* <th scope="row" key={index}> */}
                       <td>{index + 1}</td>
-                      {/* </th> */}
                       <td>{dv.ten}</td>
                       <td>Phụ Kiện</td>
                       <td>{dv.loaiDV.ten}</td>
@@ -398,12 +396,6 @@ export default function IndexDV() {
                         }).format(dv.donGia)}
                       </td>
                       <td>
-                        {/* <Link
-                          to={`/admin/dichvu/detail/${dv.id}`}
-                          className="btn btn-sm btn-secondary "
-                        >
-                          <i class="bx bxs-edit"></i>
-                        </Link> */}
                         <button
                           onClick={() => handleShowUpdate(dv.id)}
                           className="btn btn-sm btn-secondary "
