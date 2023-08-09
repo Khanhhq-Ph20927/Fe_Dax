@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "../../../css/admin.css";
 import { Link } from "react-router-dom";
-import { Sidebar } from "/Layout/Sidebar";
+import Sidebar from "/Layout/Sidebar";
 
 export default function IndexDV() {
   return (
@@ -10,14 +9,14 @@ export default function IndexDV() {
       <section id="content">
         {/* MAIN */}
         <main>
-          <div className="table-data container">
+          <div className="table-data">
             <div className="order">
               <div className="head">
                 <h3>Dịch vụ</h3>
                 <i className="bx bx-search" />
                 <i className="bx bx-filter" />
                 <div>
-                  <Link to="/api/Admin/dichvu/add" className="btn btn-primary">
+                  <Link to="/admin/dichvu/add" className="btn btn-primary">
                     Add
                   </Link>
                 </div>
@@ -34,30 +33,24 @@ export default function IndexDV() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* {ListDV.map((dv, index) => (
-                    <tr>
-                      <th scope="row" key={index}>
-                        <td>{index + 1}</td>
-                      </th>
-                      <td>{dv.ten}</td>
-                      <td>{dv.donGia}</td>
-                      <td>Phụ Kiện</td>
-                      <td>{dv.loaiDV.ten}</td>
-                      <td>
-                        <Link
-                          className="btn btn-sm btn-secondary "
-                        >
-                          Edit
-                        </Link>
-                        <span className="padd"></span>
-                        <button
-                          className="btn btn-sm btn-danger "
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))} */}
+                  <tr>
+                    <th>
+                      <td>ABC</td>
+                    </th>
+                    <td>ABC</td>
+                    <td>ABC</td>
+                    <td>ABC</td>
+                    <td>ABC</td>
+                    <td>
+                      <Link className="btn btn-sm btn-secondary ">
+                        <i class="bx bxs-edit"></i>
+                      </Link>
+                      <span className="padd"></span>
+                      <button className="btn btn-sm btn-danger ">
+                        <i class="bx bxs-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
               <div className="px-5 py-2 bg-white border-t flex flex-col xs:flex-row items-center xs:justify-between">

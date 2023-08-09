@@ -116,8 +116,8 @@ body {
 }
 
 #sidebar .side-menu li.active {
-	/* background: var(--grey); */
-	/* position: relative; */
+	background: var(--grey);
+	position: relative;
 }
 
 #sidebar .side-menu li.active::before {
@@ -498,14 +498,17 @@ body {
 }
 
 #content main .table-data .order table th {
-	padding-bottom: 12px;
-	font-size: 13px;
-	text-align: left;
+	padding-bottom: 20px;
+	font-size: 15px;
+	text-align: center;
 	border-bottom: 1px solid var(--grey);
 }
 
 #content main .table-data .order table td {
 	padding: 16px 0;
+	padding-bottom: 20px;
+	font-size: 15px;
+	text-align: center;
 }
 
 #content main .table-data .order table tr td:first-child {
@@ -513,6 +516,7 @@ body {
 	align-items: center;
 	grid-gap: 12px;
 	padding-left: 6px;
+
 }
 
 #content main .table-data .order table td img {
@@ -650,4 +654,5 @@ body {
 	#content main .table-data .todo .todo-list {
 		min-width: 420px;
 	}
+}
 }
