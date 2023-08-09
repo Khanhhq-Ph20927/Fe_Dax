@@ -1,7 +1,7 @@
 import "../../../css/admin.css";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-export default function Sidebar() {
+export default function Sidebarnv() {
   const [value, setValue] = useState("");
   const select = (e) => {
     e.preventDefault();
@@ -12,33 +12,16 @@ export default function Sidebar() {
       <section id="sidebar">
         <Link to="#" className="brand">
           <i className="bx bxs-smile" />
-          <span className="text">AdminHub</span>
+          <span className="text">Staff</span>
         </Link>
         <ul className="side-menu top">
-          <li className={value === "customer" ? "active" : ""}>
-            <Link to="/admin/customer" onClick={() => setValue("customer")}>
+          <li className={value === "xemlich" ? "active" : ""}>
+            <Link to="/xemlich/index" onClick={() => setValue("xemlich")}>
               <i class="bi bi-person-lines-fill"></i>
-              <span className="text">Customer</span>
+              <span className="text">Xem Lịch</span>
             </Link>
           </li>
-          <li className={value === "customer" ? "active" : ""}>
-            <Link to="/nhanvien/index" onClick={() => setValue("nhanvien")}>
-              <i class="bi bi-person-lines-fill"></i>
-              <span className="text">Nhân Viên</span>
-            </Link>
-          </li>
-          <li className={value === "phukien" ? "active" : ""}>
-            <Link to="/phukien/index" onClick={() => setValue("phukien")}>
-              <i class="bi bi-person-lines-fill"></i>
-              <span className="text">phukien</span>
-            </Link>
-          </li>
-          <li className={value === "mauxe" ? "active" : ""}>
-            <Link to="/mauxe/index" onClick={() => setValue("mauxe")}>
-              <i class="bi bi-person-lines-fill"></i>
-              <span className="text">Mẫu Xe</span>
-            </Link>
-          </li>
+          
           <li className={value === "chitietpt" ? "active" : ""}>
             <Link
               to="/chitietpt/index"

@@ -159,7 +159,7 @@ const ListNhanVien = () => {
                                 </div>
                                 <div>
                                     <div class="input-group rounded">
-                                        <div></div>
+                                        <label>BĐ: </label>
 
                                         <input type="date" class="form-control rounded" placeholder="Ngày Kết Thúc" value={searchst} onChange={(e) => setSearChst(e.target.value)} aria-label="Search" aria-describedby="search-addon" />
 
@@ -167,7 +167,7 @@ const ListNhanVien = () => {
                                 </div>
                                 <div>
                                     <div class="input-group rounded">
-
+                                    <label>KT: </label>
                                         <input type="date" class="form-control rounded" placeholder="Search" value={searchen} onChange={(e) => setSearChen(e.target.value)} aria-label="Search" aria-describedby="search-addon" />
 
 

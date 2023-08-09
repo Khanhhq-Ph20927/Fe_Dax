@@ -40,6 +40,8 @@ const Add_nhanvien = () => {
   const folder_name="anh-nhanvien";
   const [image,setImage]=useState("");
   const [onpenModal,setOpenModal]=useState(false);
+
+  
   const handleFile=(event)=>{
    const file =event.target.files[0];
    const formData=new FormData();
@@ -51,6 +53,9 @@ const Add_nhanvien = () => {
    .catch(err=>console.log(err));
    
   }
+  const handleScan =(result)=>{
+    setcmnd(result);
+  };
   const fetchData = async () => {
     try {
       const response = await ChucVuService.getAll();
@@ -288,12 +293,12 @@ const Add_nhanvien = () => {
                       type="tel"
                       className="form-control" name='cmnd'
                       value={cmnd}
-                      onChange={changeCmnd}
+                      onChange={(event)=>setcmnd(event.target.value)}
                     />
                   </div>
                   <div>
-                    <Link className="btn btn-secondary " onClick={()=>{setOpenModal(true)}}>Quét qr</Link>
-                   {onpenModal && <Scanner closeModal={setOpenModal}/>}
+                    <Link className="btn btn-secondary " onClick={()=>{setOpenModal(true)}}>+</Link>
+                   {onpenModal && <Scanner closeModal={setOpenModal} onScan={handleScan}/>}
                   </div>
                   <div className="md-3">
                     <SelectAddress type='province' value={province} setValue={setProvince} options={provinces} label='Tỉnh/Thành phố'></SelectAddress>
