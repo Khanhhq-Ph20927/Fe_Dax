@@ -59,6 +59,13 @@ export const APP_ROUTERS = {
       LABEL: "QUAN LI DICH VU",
       VALUE: "admin/loaidichvu/index/search/:ten",
     },
+    // <<<<<<< HEAD
+    // =======
+    //     SEARCH_TEN2: {
+    //       LABEL: "QUAN LI DICH VU",
+    //       VALUE: "admin/loaidichvu/index/search_ten/:ten/:number",
+    //     },
+    // >>>>>>> Khanhhq
     SORT: {
       LABEL: "QUAN LI DICH VU",
       VALUE: "admin/loaidichvu/index/sort/:field",
@@ -80,6 +87,7 @@ export const APP_ROUTERS = {
       VALUE: "admin/loaidichvu/delete",
     },
   },
+  // <<<<<<< HEAD
   NHANVIEN: {
     INDEX: {
       LABEL: "QUAN LI Nhan Vien",
@@ -174,4 +182,6 @@ export const APP_ROUTERS = {
       VALUE: "xemlich/index",
     },
   },
+  // =======
+  // >>>>>>> Khanhhq
 };
