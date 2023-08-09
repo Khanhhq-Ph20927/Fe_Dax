@@ -1,12 +1,7 @@
 import "../../../css/admin.css";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 export default function Sidebar() {
-  const [value, setValue] = useState("");
-  const select = (e) => {
-    e.preventDefault();
-    setValue("active");
-  };
   return (
     <>
       <section id="sidebar">
@@ -15,19 +10,18 @@ export default function Sidebar() {
           <span className="text">AdminHub</span>
         </Link>
         <ul className="side-menu top">
-          <li className={value === "customer" ? "active" : ""}>
-            <Link to="/admin/customer/index" onClick={() => setValue("customer")}>
+          <li >
+            <Link to="/admin/customer/index" >
               <i class="bi bi-person-lines-fill"></i>
-              <span className="text">Customer</span>
+              <span className="text">Khách Hàng</span>
             </Link>
           </li>
-          <li className={value === "appointment" ? "active" : ""}>
+          <li >
             <Link
               to="/admin/appointment/index"
-              onClick={() => setValue("appiontment")}
             >
               <i class="bi bi-calendar"></i>
-              <span className="text">Appointment</span>
+              <span className="text">Lịch Hẹn</span>
             </Link>
           </li>
           <li>

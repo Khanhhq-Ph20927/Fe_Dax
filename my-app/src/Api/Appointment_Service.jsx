@@ -1,6 +1,6 @@
 import { instance } from "./instance";
 
-const API = "api/lich-hen/";
+const API = "api/admin/lich-hen/";
 
 class Appointment_Service {
     getAppointment(number) {
@@ -12,8 +12,8 @@ class Appointment_Service {
     validate(appointment) {
         return instance.post(API + "validate", appointment);
     }
-    validateFU(appointment) {
-        return instance.post(API + "validateFormUpdate", appointment);
+    validateFU(appointment, id) {
+        return instance.post(API + "validateFormUpdate/" + id, appointment);
     }
     update(id, appointment) {
         return instance.put(API + "update/" + id, appointment);

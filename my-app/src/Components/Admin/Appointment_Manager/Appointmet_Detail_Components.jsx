@@ -53,7 +53,7 @@ function Appointment_Detail_Components() {
     const changeCustomer = (e) => {
         setSelectedCustomer(e.target.value);
     }
-    const updateCustomer = (e) => {
+    const updateAppointment = (e) => {
         e.preventDefault();
         var thoiGianDat = ngayDat + "T" + gioDat;
         let appointment = {
@@ -201,7 +201,7 @@ function Appointment_Detail_Components() {
                                         <div className="row">
                                             <div className="col-md-5">
                                                 <br />
-                                                <button type="submit" className="btn btn-success" onClick={updateCustomer}>Update</button>
+                                                <button type="submit" className="btn btn-success" onClick={updateAppointment}>Update</button>
                                             </div>
                                         </div>
                                     </div>

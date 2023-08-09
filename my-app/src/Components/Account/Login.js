@@ -1,9 +1,68 @@
-import React from "react";
+import React, { useState } from "react";
+import Login_Service from "../../Api/Login_Service";
+import { getUserInfoFromToken, hasRole } from "./util";
+import { toast } from 'react-toastify';
 
 export default function Login() {
+
+  const [user, setUser] = useState({ email: '', password: '' });
+
+  const handleChangeUserName = (e) => {
+    setUser((preUser) => ({ ...preUser, email: e.target.value }));
+  }
+
+  const handleChangePassword = (e) => {
+    setUser((preUser) => ({ ...preUser, password: e.target.value }));
+  }
+
+  const login = (e) => {
+    e.preventDefault();
+    console.log(user);
+    Login_Service.login_auth(user).then((response) => {
+      const data = response.data;
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      const token = localStorage.getItem('token');
+      const userInfo = getUserInfoFromToken(token);
+      if (userInfo) {
+        const isAdmin = hasRole(userInfo, 'ADMIN');
+        const isCustomer = hasRole(userInfo, 'CUSTOMER');
+        if (isAdmin) {
+          window.location.href = "/admin/customer/index";
+          toast.success('🦄 Đăng nhập thành công!', {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        } else if (isCustomer) {
+          window.location.href = "/home";
+          toast.success('🦄 Đăng nhập thành công!', {
+            position: "top-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+          });
+        } else {
+          console.log("Invalid Token");
+        }
+      } else {
+        console.log("Invalid Token");
+      }
+    }).catch((error) => { console.error(error); })
+  }
+
   return (
     <>
-      <form method="post" action="/login/">
+      <form onSubmit={login} method="post">
         <section className="vh-100 gradient-custom">
           <div className="container py-5 h-100">
             <div className="row d-flex justify-content-center align-items-center h-100">
@@ -22,16 +81,16 @@ export default function Login() {
                         <label className="form-label">User Name</label>
                         <input
                           type="text"
-                          name="ma"
                           className="form-control form-control-lg"
+                          onChange={handleChangeUserName}
                         />
                       </div>
                       <div className="form-outline form-white mb-4">
                         <label className="form-label">Password</label>
                         <input
                           type="password"
-                          name="mat_khau"
                           className="form-control form-control-lg"
+                          onChange={handleChangePassword}
                         />
                       </div>
                       <p className="small mb-5 pb-lg-2">

@@ -12,7 +12,6 @@ class Province_Service {
     getDistrictsByCode(code) {
         return axios.get(API_GET_DISTRICTS_BY_CODE + code + "?depth=2");
     }
-
 }
 
 export default new Province_Service();

@@ -1,7 +1,31 @@
 import "../../../index.css";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from 'react-toastify';
+
 export default function Header() {
+  const [status, setStatus] = useState(0);
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    if (token) {
+      setStatus(1);
+    }
+  }, [token])
+  const refresh = (e) => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    toast.success('🦄 Bạn Đã Đăng Xuất!', {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+    setStatus(0);
+  }
   return (
     <>
       {/* Topbar Start */}
@@ -41,12 +65,17 @@ export default function Header() {
               >
                 <i className="fab fa-linkedin-in" />
               </a>
-              <a
+              {status === 0 ? (<Link
                 className="btn btn-sm-square bg-white text-primary me-0"
-                href=""
+                to="/login"
               >
-                <i className="fab fa-instagram" />
-              </a>
+                <i class='bx bx-log-in'></i>
+              </Link>) : (<Link
+                className="btn btn-sm-square bg-white text-primary me-0"
+                to="/login" onClick={refresh}
+              >
+                <i class='bx bx-log-out'></i>
+              </Link>)}
             </div>
           </div>
         </div>

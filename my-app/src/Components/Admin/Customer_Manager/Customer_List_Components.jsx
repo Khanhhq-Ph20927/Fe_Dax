@@ -7,12 +7,16 @@ import { Modal, Button } from "react-bootstrap";
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
 import Province_Service from "../../../Api/Province_Service";
+import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import * as XLSX from 'xlsx/xlsx.mjs'
+// sửa lại api searchbyName BE And FE
 
 export default function Customer_List_Components() {
     const [number, setNumber] = useState(0);
     const [pageData, setPageData] = useState([]);
-    const [appointment, setAppointment] = useState([]);
+    // const [appointment, setAppointment] = useState([]);
     const [nameSearch, setNameSearch] = useState('');
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [maxPage, setMaxPage] = useState(0);
@@ -52,36 +56,40 @@ export default function Customer_List_Components() {
 
     useEffect(() => {
         fetchData();
-        totalPage();
+        // totalPage();
     }, [number])
     const fetchData = async () => {
         try {
             const response = await Customer_Service.getCustomer(number);
             const data = response.data.content;
+            setMaxPage(response.data.totalPages);
             setPageData(data);
-        } catch (error) { console.log(error); }
+        }
+        catch (error) {
+            console.error(error);
+        }
     };
     const showCustomerDetailModal = (customer, id) => {
         setSelectedCustomer(customer);
         setShowModal(true);
+        setMaKhachHang(customer.maKhachHang);
+        setHoTen(customer.hoTen);
+        setSdt(customer.sdt);
+        setEmail(customer.email);
+        setGioiTinh(customer.gioiTinh);
+        setMatKhau('');
         setID(id);
     };
-    const ListAppoiment = (id) => {
-        Customer_Service.getAppointmentByCustomer(id).then((response) => {
-            setAppointment(response.data);
-            console.log(response.data);
-        })
-    }
     const myStyle = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
     }
-    const totalPage = () => {
-        Customer_Service.getMaxPage().then((response) => {
-            setMaxPage(response.data);
-        })
-    }
+    // const totalPage = () => {
+    //     Customer_Service.getMaxPage().then((response) => {
+    //         setMaxPage(response.data);
+    //     })
+    // }
     const handlePreviousPage = () => {
         if (number > 0) {
             setNumber((prevPageNumber) => prevPageNumber - 1);
@@ -259,6 +267,7 @@ export default function Customer_List_Components() {
                         gioiTinh
                     }
                     console.log(customer);
+
                     const response = await Customer_Service.validate(customer);
                     if (response.data === 'ok') {
                         i++;
@@ -285,30 +294,28 @@ export default function Customer_List_Components() {
         fileReader.readAsArrayBuffer(selectedFile);
     }
     const deleteById = (id) => {
-        ListAppoiment(id);
-        if (window.confirm('Bạn Có Chắc Chắn Muốn Xoá!')) {
-            if (appointment.length === 0) {
+        Swal.fire({
+            title: 'Bạn có muốn xoá?',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Có, Tôi Đồng Ý!',
+            cancelButtonText: 'Không!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+
                 Customer_Service.deleteCustomer(id).then((response) => {
                     if (response.status === 200) {
-                        alert('Delete successfully');
+                        Swal.fire(
+                            'Xoá Thành Công!'
+                        )
                     }
                     fetchData();
                 }).catch(error => {
                     console.log(error);
                 })
-            } else {
-                if (window.confirm('Nếu đồng ý , tất cả dữ liệu lên quan đến khách hàng này sẽ bị xoá!')) {
-                    Customer_Service.deleteCustomer(id).then((response) => {
-                        if (response.status === 200) {
-                            alert('Delete successfully');
-                        }
-                        fetchData();
-                    }).catch(error => {
-                        console.log(error);
-                    })
-                }
             }
-        }
+        })
     }
     const updateCustomer = (e) => {
         e.preventDefault();
@@ -330,13 +337,31 @@ export default function Customer_List_Components() {
                 if (response.data === "ok") {
                     Customer_Service.updateCustomer(customerUpdate, ID).then((response) => {
                         if (response.status === 200) {
-                            alert('Cập Nhật Thành Công!');
+                            toast.success('🦄 Sửa thành công!', {
+                                position: "top-right",
+                                autoClose: 2000,
+                                hideProgressBar: false,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                                progress: undefined,
+                                theme: "light",
+                            });
                             setShowModal(false);
                             fetchData();
                         }
                     });
                 } else {
-                    alert(response.data);
+                    toast.error(response.data, {
+                        position: "top-right",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                    });
                 }
             })
         }
@@ -398,9 +423,9 @@ export default function Customer_List_Components() {
                                                     <td>{customer.sdt}</td>
                                                     <td>{customer.quanHuyen + ", " + customer.tinhThanhPho}</td>
                                                     <td>{customer.gioiTinh === true ? "Nam" : "Nữ"}</td>
-                                                    <td><button className='btn btn-danger' onClick={() => deleteById(customer.id)}>Delete</button>
+                                                    <td><button className='btn btn-danger' onClick={() => deleteById(customer.id)}><i class="bx bxs-trash"></i></button>
                                                         <span className="padd2"></span>
-                                                        <Button className='btn btn-success' onClick={() => showCustomerDetailModal(customer, customer.id)}>Detail</Button>
+                                                        <Button className='btn btn-success' onClick={() => showCustomerDetailModal(customer, customer.id)}><i class="bx bxs-edit"></i></Button>
                                                     </td>
                                                 </tr>
 
@@ -423,111 +448,109 @@ export default function Customer_List_Components() {
                         <Modal.Title>Chi tiết khách hàng</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        {selectedCustomer && (
-                            <form className="col-md-12" id="myForm" onSubmit={updateCustomer}>
-                                <div className="row">
-                                    <div className="col-md-6 padd2">
-                                        <div className="row">
-                                            <label className="form-label">
-                                                Mã Khách Hàng
-                                            </label>
-                                            <input type="text" value={selectedCustomer.maKhachHang}
-                                                onChange={changeMa} className='form-control' />
-                                        </div>
+                        <form className="col-md-12" id="myForm" onSubmit={updateCustomer}>
+                            <div className="row">
+                                <div className="col-md-6 padd2">
+                                    <div className="row">
+                                        <label className="form-label">
+                                            Mã Khách Hàng
+                                        </label>
+                                        <input type="text" value={maKhachHang}
+                                            onChange={changeMa} className='form-control' />
                                     </div>
-                                    <div className="col-md-6 padd2">
-                                        <div className="row">
-                                            <label className="form-label">
-                                                Mật Khẩu
-                                            </label>
-                                            <input type="text" value={matKhau}
-                                                onChange={changeMatKhau} className='form-control' />
+                                </div>
+                                <div className="col-md-6 padd2">
+                                    <div className="row">
+                                        <label className="form-label">
+                                            Mật Khẩu
+                                        </label>
+                                        <input type="text" value={matKhau}
+                                            onChange={changeMatKhau} className='form-control' />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-6 padd2">
+                                    <div className="row">
+                                        <label className="form-label">
+                                            Họ Tên
+                                        </label>
+                                        <input type="text" value={hoTen}
+                                            onChange={changeName} className='form-control' />
+                                    </div>
+                                </div>
+                                <div className="col-md-6 padd2">
+                                    <div className="row">
+                                        <label className="form-label">
+                                            Giới Tính
+                                        </label>
+                                        <div className="form-check">
+                                            <input type="radio" className="form-check-input" value="true"
+                                                checked={gioiTinh} onChange={() => setGioiTinh(true)} /> Nam
+                                        </div>
+                                        <div className="form-check">
+                                            <input type="radio" className="form-check-input" value="false"
+                                                checked={!gioiTinh} onChange={() => setGioiTinh(false)} /> Nữ
                                         </div>
                                     </div>
                                 </div>
-                                <div className="row">
-                                    <div className="col-md-6 padd2">
-                                        <div className="row">
-                                            <label className="form-label">
-                                                Họ Tên
-                                            </label>
-                                            <input type="text" value={selectedCustomer.hoTen}
-                                                onChange={changeName} className='form-control' />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6 padd2">
-                                        <div className="row">
-                                            <label className="form-label">
-                                                Giới Tính
-                                            </label>
-                                            <div className="form-check">
-                                                <input type="radio" className="form-check-input" value="true"
-                                                    checked={selectedCustomer.gioiTinh} onChange={() => setGioiTinh(true)} /> Nam
-                                            </div>
-                                            <div className="form-check">
-                                                <input type="radio" className="form-check-input" value="false"
-                                                    checked={!selectedCustomer.gioiTinh} onChange={() => setGioiTinh(false)} /> Nữ
-                                            </div>
-                                        </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-6 padd2">
+                                    <div className="row">
+                                        <label className="form-label">
+                                            Email
+                                        </label>
+                                        <input className="form-control" type="email" value={email}
+                                            onChange={changeEmail} />
                                     </div>
                                 </div>
-                                <div className="row">
-                                    <div className="col-md-6 padd2">
-                                        <div className="row">
-                                            <label className="form-label">
-                                                Email
-                                            </label>
-                                            <input className="form-control" type="email" value={selectedCustomer.email}
-                                                onChange={changeEmail} />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6 padd2">
-                                        <div className="row">
-                                            <label className="form-label">
-                                                Số Điện Thoại
-                                            </label>
-                                            <input className="form-control" type="text" value={selectedCustomer.sdt}
-                                                onChange={changeSdt} />
-                                        </div>
+                                <div className="col-md-6 padd2">
+                                    <div className="row">
+                                        <label className="form-label">
+                                            Số Điện Thoại
+                                        </label>
+                                        <input className="form-control" type="text" value={sdt}
+                                            onChange={changeSdt} />
                                     </div>
                                 </div>
-                                <div className="row">
-                                    <div className="col-md-6 padd2">
-                                        <div className="row">
-                                            <label className="form-label padd3">
-                                                Tỉnh, Thành Phố
-                                            </label>
-                                            <Select
-                                                value={defaultValueProvince}
-                                                onChange={changeTTP}
-                                                closeMenuOnSelect={false}
-                                                components={animatedComponents}
-                                                options={Provinces}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="col-md-6 padd2">
-                                        <div className="row">
-                                            <label className="form-label padd3">
-                                                Quận Huyện
-                                            </label>
-                                            <Select
-                                                value={(defaultValueDistricts)}
-                                                onChange={changeQH}
-                                                closeMenuOnSelect={false}
-                                                components={animatedComponents}
-                                                options={selectedProvince === null ? Districtss : Districtsss}
-                                            />
-                                        </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-6 padd2">
+                                    <div className="row">
+                                        <label className="form-label padd3">
+                                            Tỉnh, Thành Phố
+                                        </label>
+                                        <Select
+                                            value={defaultValueProvince}
+                                            onChange={changeTTP}
+                                            closeMenuOnSelect={false}
+                                            components={animatedComponents}
+                                            options={Provinces}
+                                        />
                                     </div>
                                 </div>
-                                <div className="row">
-                                    <div className="col-md-12 d-flex justify-content-center mt-3">
-                                        <button type="submit" className="btn btn-success">Update</button>
+                                <div className="col-md-6 padd2">
+                                    <div className="row">
+                                        <label className="form-label padd3">
+                                            Quận Huyện
+                                        </label>
+                                        <Select
+                                            value={(defaultValueDistricts)}
+                                            onChange={changeQH}
+                                            closeMenuOnSelect={false}
+                                            components={animatedComponents}
+                                            options={selectedProvince === null ? Districtss : Districtsss}
+                                        />
                                     </div>
                                 </div>
-                            </form>
-                        )}
+                            </div>
+                            <div className="row">
+                                <div className="col-md-12 d-flex justify-content-center mt-3">
+                                    <button type="submit" className="btn btn-success">Cập Nhật</button>
+                                </div>
+                            </div>
+                        </form>
                     </Modal.Body>
                     <Modal.Footer>
                     </Modal.Footer>
