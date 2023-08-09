@@ -20,14 +20,14 @@ function App() {
   return (
     <div className="App">
       <Routes>
-      <Route path="/login" element={<Login />}></Route>
+        <Route path="/login" element={<Login />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/" excact element={<Home_Page />}></Route>
         <Route path="/home" element={<Home_Page />}></Route>
         <Route path="/about" element={<About />}></Route>
         <Route path="/service" element={<Service />}></Route>
         <Route path="/booking" element={<Booking />}></Route>
-        <Route path="/contact" element={<Contact />}></Route>s
+        <Route path="/contact" element={<Contact />}></Route>
         <Route path="/Admin" element={<Sidebar />}></Route>
         <Route
           path={APP_ROUTERS.DichVu.INDEX.VALUE}
