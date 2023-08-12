@@ -10,13 +10,11 @@ import Province_Service from "../../../Api/Province_Service";
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import * as XLSX from 'xlsx/xlsx.mjs'
-// sửa lại api searchbyName BE And FE
+import * as XLSX from 'xlsx/xlsx.mjs';
 
 export default function Customer_List_Components() {
     const [number, setNumber] = useState(0);
     const [pageData, setPageData] = useState([]);
-    // const [appointment, setAppointment] = useState([]);
     const [nameSearch, setNameSearch] = useState('');
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [maxPage, setMaxPage] = useState(0);
@@ -56,7 +54,6 @@ export default function Customer_List_Components() {
 
     useEffect(() => {
         fetchData();
-        // totalPage();
     }, [number])
     const fetchData = async () => {
         try {
@@ -64,6 +61,7 @@ export default function Customer_List_Components() {
             const data = response.data.content;
             setMaxPage(response.data.totalPages);
             setPageData(data);
+            console.log(data);
         }
         catch (error) {
             console.error(error);
@@ -85,11 +83,6 @@ export default function Customer_List_Components() {
         justifyContent: 'center',
         alignItems: 'center',
     }
-    // const totalPage = () => {
-    //     Customer_Service.getMaxPage().then((response) => {
-    //         setMaxPage(response.data);
-    //     })
-    // }
     const handlePreviousPage = () => {
         if (number > 0) {
             setNumber((prevPageNumber) => prevPageNumber - 1);
@@ -522,6 +515,7 @@ export default function Customer_List_Components() {
                                             Tỉnh, Thành Phố
                                         </label>
                                         <Select
+                                            className="form-control"
                                             value={defaultValueProvince}
                                             onChange={changeTTP}
                                             closeMenuOnSelect={false}
@@ -536,6 +530,7 @@ export default function Customer_List_Components() {
                                             Quận Huyện
                                         </label>
                                         <Select
+                                            className="form-control"
                                             value={(defaultValueDistricts)}
                                             onChange={changeQH}
                                             closeMenuOnSelect={false}

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Login_Service from "../../Api/Login_Service";
 import { getUserInfoFromToken, hasRole } from "./util";
 import { toast } from 'react-toastify';
+import { Link } from "react-router-dom";
 
 export default function Login() {
 
@@ -75,10 +76,10 @@ export default function Login() {
                     <div className="mb-md-5 mt-md-4 pb-5">
                       <h2 className="fw-bold mb-2 text-uppercase">Login</h2>
                       <p className="text-white-50 mb-5">
-                        Please enter your login and password!
+                        Please enter your email and password!
                       </p>
                       <div className="form-outline form-white mb-4">
-                        <label className="form-label">User Name</label>
+                        <label className="form-label">Email</label>
                         <input
                           type="text"
                           className="form-control form-control-lg"
@@ -106,14 +107,17 @@ export default function Login() {
                       </button>
                       <div className="d-flex justify-content-center text-center mt-4 pt-1">
                         <a href="#!" className="text-white">
-                          <i className="fab fa-facebook-f fa-lg" />
+                          <i className="fab fa-facebook-f fa-lg mx-2 px-2" />
                         </a>
                         <a href="#!" className="text-white">
-                          <i className="fab fa-twitter fa-lg mx-4 px-2" />
+                          <i className="fab fa-twitter fa-lg mx-2 px-2" />
                         </a>
                         <a href="#!" className="text-white">
-                          <i className="fab fa-google fa-lg" />
+                          <i className="fab fa-google fa-lg mx-2 px-2" />
                         </a>
+                        <Link to={`/login_with_number_phone`} className="text-white">
+                          <i class='bx bxs-phone bx-sm mx-2 px-2'></i>
+                        </Link>
                       </div>
                     </div>
                     <div>

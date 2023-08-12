@@ -2,6 +2,12 @@ import "../../../css/admin.css";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 export default function Sidebar() {
+  const logout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    window.location = "/home";
+  }
   return (
     <>
       <section id="sidebar">
@@ -45,7 +51,7 @@ export default function Sidebar() {
         </ul>
         <ul className="side-menu">
           <li>
-            <Link to="#" className="logout">
+            <Link to="/home" className="logout" onClick={logout}>
               <i className="bx bxs-log-out-circle" />
               <span className="text">Logout</span>
             </Link>

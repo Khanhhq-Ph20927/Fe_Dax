@@ -16,11 +16,13 @@ import Create_Appointment_Components from "./Components/Admin/Appointment_Manage
 import Appointment_Detail_Components from "./Components/Admin/Appointment_Manager/Appointmet_Detail_Components";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Login_With_NumberPhone from "./Components/Account/Login_With_NumberPhone";
 function App() {
   return (
     <div className="App">
       <Routes>
         <Route path="/login" element={<Login />}></Route>
+        <Route path="/login_with_number_phone" element={<Login_With_NumberPhone />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/" excact element={<Home_Page />}></Route>
         <Route path="/home" element={<Home_Page />}></Route>

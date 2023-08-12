@@ -5,26 +5,13 @@ export const instance = axios.create({
   baseURL: PORT,
   timeout: 10000,
   headers: {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-    'Access-Control-Allow-Headers': '*',
     'Content-Type': 'application/json'
   }
 });
 
 axios.interceptors.request.use(
   function (config) {
-    const token = localStorage.getItem('token');
-    console.log(token);
-    if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
-      //`Bearer ${token}`;
-      // config.headers["Content-Type"] = 'application/json';
-      // config.headers["Access-Control-Allow-Origin"] = '*';
-      // config.headers["Access-Control-Allow-Methods"] = 'GET,PUT,POST,DELETE,PATCH,OPTIONS';
-      // config.headers["Access-Control-Allow-Headers"] = '*';
-      return config;
-    }
+    return config;
     // check if acctoken localstorage
     //  retun config.header {}
   },
