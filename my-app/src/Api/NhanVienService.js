@@ -1,43 +1,43 @@
-import axios from 'axios';
 import axiosDefault from 'axios'
-const NhanVien_API_URL = 'http://localhost:8080/nhan-vien';
+import { instance } from './instance';
+const NhanVien_API_URL = 'nhan-vien';
 class NhanVienService {
     getAll() {
-        return axios.get(NhanVien_API_URL + '/index');
+        return instance.get(NhanVien_API_URL + '/index');
     }
     deleteById(id) {
-        return axios.delete(NhanVien_API_URL + '/delete/' + id);
+        return instance.delete(NhanVien_API_URL + '/delete/' + id);
     }
     getById(id) {
-        return axios.get(NhanVien_API_URL + '/getById/' + id);
+        return instance.get(NhanVien_API_URL + '/getById/' + id);
     }
     create(nhanvien) {
-        return axios.post(NhanVien_API_URL + '/create', nhanvien);
+        return instance.post(NhanVien_API_URL + '/create', nhanvien);
     }
     update(id,nhanvien){
-        return axios.put(NhanVien_API_URL + '/update/' + id,nhanvien);
+        return instance.put(NhanVien_API_URL + '/update/' + id,nhanvien);
     }
     paging(number){
-        return axios.get(NhanVien_API_URL +'/Page/'+number);
+        return instance.get(NhanVien_API_URL +'/Page/'+number);
     }
     search(keyword){
-        return axios.get(NhanVien_API_URL +'/search/'+ keyword);
+        return instance.get(NhanVien_API_URL +'/search/'+ keyword);
     }
     searchcv(chucVu){
-        return axios.get(NhanVien_API_URL +'/searchchucvu/'+ chucVu);
+        return instance.get(NhanVien_API_URL +'/searchchucvu/'+ chucVu);
     }
      seachtt(trangThai){
-        return axios.get(NhanVien_API_URL +'/searchtt/'+ trangThai);
+        return instance.get(NhanVien_API_URL +'/searchtt/'+ trangThai);
      }
      seachns(startDate,endDate){
-        return axios.get(NhanVien_API_URL +'/searchns/' + startDate + '/' + endDate);
+        return instance.get(NhanVien_API_URL +'/searchns/' + startDate + '/' + endDate);
      }
     
 }
 export default new NhanVienService(); 
 export const apiGetPublicProvinces = () => new Promise(async (resolve, reject) => {
         try {
-            const response = await axiosDefault({
+            const response = await instance({
                 method: 'get',
                 url: 'https://vapi.vnappmob.com/api/province/'
             })
@@ -48,7 +48,7 @@ export const apiGetPublicProvinces = () => new Promise(async (resolve, reject) =
     })
     export const apiGetPublicDistrict = (provinceId) => new Promise(async (resolve, reject) => {
         try {
-            const response = await axiosDefault({
+            const response = await instance({
                 method: 'get',
                 url: `https://vapi.vnappmob.com/api/province/district/${provinceId}`
             })

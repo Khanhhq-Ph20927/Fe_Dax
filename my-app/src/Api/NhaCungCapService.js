@@ -1,27 +1,28 @@
-import axios from 'axios';
+
 import axiosDefault from 'axios'
-const NhaCC_API_URL = 'http://localhost:8080/nha-cung-cap';
+import { instance } from './instance';
+const NhaCC_API_URL = 'nha-cung-cap';
 class NhaCCService {
     getAll() {
-        return axios.get(NhaCC_API_URL + '/index');
+        return instance.get(NhaCC_API_URL + '/index');
     }
     deleteById(id) {
-        return axios.delete(NhaCC_API_URL + '/delete/' + id);
+        return instance.delete(NhaCC_API_URL + '/delete/' + id);
     }
     getById(id) {
-        return axios.get(NhaCC_API_URL + '/getById/' + id);
+        return instance.get(NhaCC_API_URL + '/getById/' + id);
     }
     createnhacc(nhacungcap) {
-        return axios.post(NhaCC_API_URL + '/create', nhacungcap);
+        return instance.post(NhaCC_API_URL + '/create', nhacungcap);
     }
     update(id,nhacc){
-        return axios.put(NhaCC_API_URL + '/update/' + id,nhacc);
+        return instance.put(NhaCC_API_URL + '/update/' + id,nhacc);
     }
 }
 export default new NhaCCService();
 export const apiGetPublicProvinces = () => new Promise(async (resolve, reject) => {
     try {
-        const response = await axiosDefault({
+        const response = await instance({
             method: 'get',
             url: 'https://vapi.vnappmob.com/api/province/'
         })
@@ -32,7 +33,7 @@ export const apiGetPublicProvinces = () => new Promise(async (resolve, reject) =
 })
 export const apiGetPublicDistrict = (provinceId) => new Promise(async (resolve, reject) => {
     try {
-        const response = await axiosDefault({
+        const response = await instance({
             method: 'get',
             url: `https://vapi.vnappmob.com/api/province/district/${provinceId}`
         })

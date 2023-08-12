@@ -6,12 +6,15 @@ import Sidebar from "../Layout/Sidebar";
 import { toast } from "react-toastify";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/esm/Button";
+import NhaCungCapService from "../../../Api/NhaCungCapService";
+import axios from "axios";
+import { instance } from "../../../Api/instance";
 const myStyle = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
 }
-const ListPhuKien = () => {
+export default function ListPhuKien(){
     const pageSize = 2;
     const [phukien, setPhuKien] = useState([])
     const [pageNumber, setPageNumber] = useState(0);
@@ -23,14 +26,52 @@ const ListPhuKien = () => {
     const [searchgia, setSearchgia] = useState("");
     const [show, setShow] = useState(false);
     const [deleteId, setDeleteId] = useState("");
+     const [maPhuKien, setMaPhuKien] = useState('');
+    const [tenPhuKien, setTenPhuKien] = useState('');
+    const [gia, setGia] = useState('');
+    const [soLuongTon, setSoLuongTon] = useState('');
+    const [ngayTao, setNgayTao] = useState('');
+    const [ngaySua, setNgaySua] = useState('');
+    const [trangThai, setTrangThai] = useState('');
+    const [nhaCungCap, setNhaCC] = useState([]);
+     const [getid,setid]=useState("");
+     const [showConfrimUpdate,setConfrimUpdate]=useState(false);
+    const [showModalUpdate,setshowModalUpdate]=useState(false);
+    const [selectnhacc, setselectNhaCC] = useState(null);
+    const preset_key="du-an1";
+    const folder_name="anh-phukien";
+    const cloud_name="dommoqita";
+    const [image,setImage]=useState("");
+    const handleFile=(event)=>{
+        const file=event.target.files[0];
+        const formData=new FormData();
+        formData.append('file',file);
+         formData.append("folder",folder_name);
+        formData.append("upload_preset",preset_key);
+        instance.post(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,formData)
+        .then(res =>setImage(res.data.secure_url))
+        .catch(err=>console.log(err));
+       
+    }
     const handleClose = () => {
         setShow(false);
+        setshowModalUpdate(false);
+        setConfrimUpdate(false);
     };
 
     const handleShow = (id) => {
         console.log(id);
-        setDeleteId(id);
+        setid(id);
         setShow(true);
+    };
+     const handleShowUpdate =(id)=>{
+       console.log(id);
+       setid(id);
+       setshowModalUpdate(true);
+    };
+    const handleShowConfrimUpdate =()=>{
+        setshowModalUpdate(false);
+        setConfrimUpdate(true);
     };
     const fetchData = async () => {
         try {    
@@ -57,16 +98,6 @@ const ListPhuKien = () => {
         setPageData(currentPageData);
     }, [pageNumber, pageSize, searchResults, phukien]);
 
-    // const fetchData = useCallback(async () => {
-    //     try {
-    //       const response = await PhuKienService.paging(pageNumber);
-    //       const data = response.data.content;
-    //       setPageData(data);
-    //       console.log(data);
-    //     } catch (error) {
-    //       console.log(error);
-    //     }
-    //   }, [pageNumber]);
     const handleSearch = () => {
         PhuKienService.search(searchKeyword)
             .then((response) => {
@@ -92,8 +123,12 @@ const ListPhuKien = () => {
             .then((response) => {
                 setSearchResults(response.data);
                 setPageNumber(0); // Đặt lại số trang về 0
+                if(response.data.length === 0){
+                    toast.error("Không tìm thấy kết quả");
+                }
             })
             .catch((error) => {
+                
                 console.log(error);
             });
     };
@@ -122,12 +157,18 @@ const ListPhuKien = () => {
             setPageNumber((prevPageNumber) => prevPageNumber - 1);
         }
     };
-    const handleNextPage = () => {
+const handleNextPage = () => {
+  const currentData = searchResults.length > 1 ? searchResults : phukien;
+  const startIndex = pageNumber * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentPageData = currentData.slice(startIndex, endIndex);
 
-        setPageNumber((prevPageNumber) => prevPageNumber + 1);
-    }
+  if (currentPageData.length >= pageSize && currentPageData.length > 1) {
+    setPageNumber((prevPageNumber) => prevPageNumber + 1);
+  }
+    };
     const DeleteDV = () => {
-            PhuKienService.deleteById(deleteId)
+            PhuKienService.deleteById(getid)
                 .then((res) => {
                     setShow(false);
                     toast.success('Delete Successful');
@@ -135,10 +176,93 @@ const ListPhuKien = () => {
                     fetchData();
                 })
                 .catch((error) => {
+                    toast.error('Delete Thất bại');
                     console.log(error);
                 });
         };
+    useEffect(() => {
+        ListNhaCC();
+        PhuKienService.getById(getid).then((res) => {
+            let phukien = res.data;
+            setTenPhuKien(phukien.tenPhuKien);
+            setMaPhuKien(phukien.maPhuKien);
+            setGia(phukien.gia);
+            setSoLuongTon(phukien.soLuongTon);
+            setNgayTao(phukien.ngayTao);
+            setNgaySua(phukien.ngaySua);
+            setTrangThai(phukien.trangThai);
+            setImage(phukien.image);
+            setselectNhaCC(phukien.nhaCungCap.id);
+        }).catch((error)=>{
+            console.log("Error",error);
+        });
+    }, [getid]);
+
+    const ListNhaCC = () => {
+        NhaCungCapService.getAll().then((response) => {
+            setNhaCC(response.data);
+        }).catch((error) => {
+            console.log(error);
+        });
+    };
+
+    const changengaytao = (e) => {
+        setNgayTao(e.target.value);
+    };
+
+    const changengaysua = (e) => {
+        setNgaySua(e.target.value);
+    };
+    const changegia = (e) => {
+        setGia(e.target.value);
+    };
+    const changetrangthai = (e) => {
+        setTrangThai(e.target.value);
+    };
+    const changemaphukien = (e) => {
+        setMaPhuKien(e.target.value);
+    };
+    const changeimage = (e) => {
+        setImage(e.target.value);
+    };
+    const changetenphukien = (e) => {
+        setTenPhuKien(e.target.value);
+    };
+    const changesoluongton = (e) => {
+        setSoLuongTon(e.target.value);
+    };
+
+    const changenhacc = (e) => {
+        setselectNhaCC(e.target.value);
+    };
+    const updatephukien = (e) => {
+        e.preventDefault();
+        let phukien = {
+        
+            maPhuKien,
+            tenPhuKien,
+            gia,
+            soLuongTon,
+            ngayTao,
+            ngaySua,
+            trangThai,
+            image,
+            nhaCungCap: { id: selectnhacc },
+
+
+        };
+        console.log(getid);
+        console.log('phukien =>' + JSON.stringify(phukien));
+        PhuKienService.update(getid, phukien).then(res => {
+            setConfrimUpdate(false);
+            toast.success('Update Successful');
+           fetchData();
+        }).catch((error)=>{
+            toast.error("Update thất bại");
+            console.log(error);
+        });
     
+};
     return (
         <>
             <Sidebar />
@@ -171,9 +295,9 @@ const ListPhuKien = () => {
                                     <div class="input-group rounded">
                                         <select value={searchNhacc} onChange={(e) => setSearchNhacc(e.target.value)} aria-label="Search" onClick={handleSearchncc} aria-describedby="search-addon" class="form-control rounded" >
                                             <option value="">Nha CC</option>
-                                            {phukien.map((cv) => (
-                                                <option key={cv.nhaCungCap?.id} value={cv.nhaCungCap?.id}>
-                                                    {cv.nhaCungCap?.ten}
+                                            {nhaCungCap.map((cv) => (
+                                                <option key={cv.id} value={cv.id}>
+                                                    {cv.ten}
                                                 </option>
                                             ))}
                                         </select>
@@ -235,7 +359,7 @@ const ListPhuKien = () => {
                                                     <box-icon name='trash'><i class='bx bx-trash'></i> </box-icon>
                                                 </button>
                                                 <span className="padd"></span>
-                                                <Link className="btn btn-success" to={'/phukien/update/' + phukien.id}>
+                                                <Link className="btn btn-success" onClick={() => handleShowUpdate(phukien.id)}>
                                                     <box-icon name='edit-alt' ><i class='bx bx-edit-alt' ></i></box-icon>
                                                 </Link>
                                             </td>
@@ -253,7 +377,140 @@ const ListPhuKien = () => {
                         </div>
                     </div>
                 </main>
-                <>
+                
+                 <>
+          <Modal show={showModalUpdate} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Cập nhật</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <main className="container">
+                    
+                            <div className="head">
+                                <h3>Update Phụ Kiện</h3>
+                            </div>
+                            <form onSubmit={updatephukien}>
+                                <div className="row">
+                                <div className=" row mt-3">
+                                    <div className="col-6">
+                                        <label>Nhà Cung Cấp</label>
+                                        <select
+                                            className="form-select"
+                                            aria-label="Default select example"
+                                            name="nhaCungCap"
+                                            value={selectnhacc || ''} // Chỉnh sửa ở đây
+                                            onChange={changenhacc}
+                                        >
+                                            <option value="">Select NhàCC</option>
+                                            {nhaCungCap.map((ncc) => (
+                                                <option key={ncc.id} value={ncc.id}>
+                                                    {ncc.ten}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    {/* <div className="md-3">
+                                        <label className="form-label">
+                                            Ngày Tạo                                     </label>
+                                        <input type="date" value={ngayTao} name="ngayTao"
+                                            onChange={changengaytao} className='form-control' />
+                                    </div> */}
+                                    <div className="col-6">
+                                        <label className="form-label">
+                                            Mã Phu Kiện
+                                        </label>
+                                        <input type="text" value={maPhuKien} name="maPhuKien"
+                                            onChange={changemaphukien} className='form-control' />
+                                    </div></div>
+                                    <div className="row mt-3">
+                                    <div className="col-6">
+                                        <label className="form-label">
+                                            Tên Phụ Kiện
+                                        </label>
+                                        <input className="form-control" type="text" name="tenPhuKien" value={tenPhuKien}
+                                            onChange={changetenphukien} />
+                                    </div>
+                                    <div className="col-6">
+                                        <label className="form-label">
+                                            Số Lượng Tồn
+                                        </label>
+                                        <input type="number" className="form-control" name="soLuongTon" value={soLuongTon}
+                                            onChange={changesoluongton} />
+                                    </div></div>
+                                    <div className="row mt-3">
+                                    <div className="col-6">
+                                        <label className="form-label">
+                                            Giá
+                                        </label>
+                                        <input className="form-control" type="number" name="gia" value={gia}
+                                            onChange={changegia} />
+                                    </div>
+                                    {/* <div className="md-3">
+                                        <label className="form-label">
+                                            Ngày Sửa
+                                        </label>
+                                        <input type="date" value={ngaySua} name="ngaySua"
+                                            onChange={changengaysua} className='form-control' />
+                                    </div> */}
+                                    <div className="col-6">
+                                        <label>Trang Thái</label>
+                                        <select
+                                            class="form-select" name='trangThai'
+                                            value={trangThai}
+                                            onChange={changetrangthai}
+                                        >
+
+                                            <option value="0">Còn Hàng</option>
+                                            <option value="1">Hết Hàng</option>
+                                        </select>
+                                    </div>
+                                    </div>
+                                    <div className="row mt-3">
+                                                <div className='col-6'>
+                                                    <label>Ảnh</label>
+                                                    <input type="file" name="image" onChange={handleFile} className='form-control' />
+                                                    <br />
+                                                    <img src={image} onChange={changeimage} />
+                                                </div>
+                                            </div>
+                                </div>
+                            </form>
+                     
+                </main>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={handleShowConfrimUpdate}>
+                Update
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+        {/* modalConfrimUpdate */}
+        <>
+          <Modal
+            show={showConfrimUpdate}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Cập nhật Dịch vụ</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Bạn có chắc chắn muốn cập nhật?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Không
+              </Button>
+              <Button variant="primary" onClick={updatephukien}>
+                Có
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+        <>
           <Modal
             show={show}
             onHide={handleClose}
@@ -280,5 +537,3 @@ const ListPhuKien = () => {
     );
 }
 
-
-export default ListPhuKien;

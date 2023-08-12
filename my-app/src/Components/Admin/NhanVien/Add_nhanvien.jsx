@@ -13,6 +13,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/esm/Button";
 import Scanner from './Scanner';
 import axios from 'axios';
+import { instance } from '../../../Api/instance';
 const Add_nhanvien = () => {
   const [maNhanVien, setMaNhanVien] = useState('');
   const [ho, setHo] = useState('');
@@ -35,6 +36,7 @@ const Add_nhanvien = () => {
   const [districts, setDistricts] = useState([])
   const [reset, setReset] = useState(false)
   const [show, setShow] = useState(false);
+  const [showsc,setShowsc]=useState(false);
   const preset_key="du-an1";
   const cloud_name="dommoqita";
   const folder_name="anh-nhanvien";
@@ -48,11 +50,24 @@ const Add_nhanvien = () => {
    formData.append('file',file);
    formData.append("upload_preset",preset_key);
    formData.append("folder",folder_name);
-   axios.post(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,formData)
+   instance.post(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,formData)
    .then(res =>setImage(res.data.secure_url))
    .catch(err=>console.log(err));
    
   }
+  const handleClose=()=>{
+    setShow(false);
+    setShowsc(false);
+  };
+  const handleShow=()=>{
+    console.log();
+    setShow(true);
+  };
+  const handleShowsc=()=>{
+    console.log();
+    setShowsc(true);
+  }
+
   const handleScan =(result)=>{
     setcmnd(result);
   };
@@ -88,11 +103,10 @@ const Add_nhanvien = () => {
       image:image,
       chucVu: { maChucVu: selectedChucVu }
     };
-    const confix =window.confirm("Bạn có chắn muốn thêm không?")
-    if(confix){
+   
     console.log('nhanvien =>' + JSON.stringify(newnhanvien));
     NhanVienService.create(newnhanvien).then(res => {
-
+       setShow(false);
       toast.success('Save Successful');
       
     }).catch(error => {
@@ -100,7 +114,7 @@ const Add_nhanvien = () => {
         toast.error(error.response.data);
       }
     });
-  }
+  
   }
 
 
@@ -196,7 +210,7 @@ const Add_nhanvien = () => {
                   </AddChucVu>
                 </button>
               </div> */}
-              <form onSubmit={saveNhanVien}>
+              <form>
                 <div className=" row col-md-6 offset-md-3">
                   <div className="md-3">
                     <label>Họ</label>
@@ -297,8 +311,8 @@ const Add_nhanvien = () => {
                     />
                   </div>
                   <div>
-                    <Link className="btn btn-secondary " onClick={()=>{setOpenModal(true)}}>+</Link>
-                   {onpenModal && <Scanner closeModal={setOpenModal} onScan={handleScan}/>}
+                    <Link className="btn btn-secondary " onClick={handleShowsc}>+</Link>
+                   {/* {onpenModal && <Scanner closeModal={setOpenModal} onScan={handleScan}/>} */}
                   </div>
                   <div className="md-3">
                     <SelectAddress type='province' value={province} setValue={setProvince} options={provinces} label='Tỉnh/Thành phố'></SelectAddress>
@@ -326,13 +340,13 @@ const Add_nhanvien = () => {
                   <div>
                   <div className=" row mt-3 form-outline form-white mb-2">
                     <div className="col-6">
-                      <button
+                      <a
                         type="submit"
-                        onClick={saveNhanVien}
+                        onClick={handleShow}
                         className="btn btn-secondary form-control"
                       >
                         ADD
-                      </button>
+                      </a>
                     </div>
                     <div className="col-6">
                       <Link
@@ -348,7 +362,49 @@ const Add_nhanvien = () => {
             </div>
           </div>
         </main>
-      </section> <ToastContainer />
+        <>
+          <Modal
+            show={show}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Thêm Nhân Viên</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Bạn có chắc chắn muốn thêm ?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Không
+              </Button>
+              <Button variant="primary" onClick={saveNhanVien}>
+                Có
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+        <>
+          <Modal
+            show={showsc}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Quét QR</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                   {<Scanner  onScan={handleScan}/>}
+
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Không
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+      </section> 
     </>
 
   );

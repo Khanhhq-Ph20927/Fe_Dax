@@ -4,17 +4,22 @@ import PhuKienService from '../../../Api/PhuKienService';
 import NhaCungCapService from '../../../Api/NhaCungCapService';
 import Sidebar from '../Layout/Sidebar';
 import AddNhaCC from '../NhaCC/Add_NhaCC';
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/esm/Button";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-
-const AddPhuKien = () => {
+import CurrencyFormat from 'react-currency-format';
+import { instance } from '../../../Api/instance';
+export default function AddPhuKien ()  {
     const [maPhuKien, setMaPhuKien] = useState('');
     const [tenPhuKien, setTenPhuKien] = useState('');
     const [gia, setGia] = useState('');
     const [soLuongTon, setSoLuongTon] = useState('');
     const [ngayTao, setNgayTao] = useState('');
     const [ngaySua, setNgaySua] = useState('');
+    const [getpk, setpk] = useState('');
+    const [show, setShow] = useState(false);
     const [trangThai, setTrangThai] = useState(0);
     const [nhaCungCap, setNhaCungCap] = useState([]);
     const [selectedNhaCungCap, setSelectedNhaCungCap] = useState(null);
@@ -29,11 +34,18 @@ const AddPhuKien = () => {
         formData.append('file',file);
          formData.append("folder",folder_name);
         formData.append("upload_preset",preset_key);
-        axios.post(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,formData)
+        instance.post(`https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`,formData)
         .then(res =>setImage(res.data.secure_url))
         .catch(err=>console.log(err));
        
     }
+    const handleClose = () => {
+        setShow(false);
+    };
+    const handleShow =()=>{
+        console.log();
+        setShow(true);
+    };
     const savePhuKien = (event) => {
         event.preventDefault();
 
@@ -48,21 +60,20 @@ const AddPhuKien = () => {
             image:image,
             nhaCungCap: { id: selectedNhaCungCap },
         };
-        const confix =window.confirm("Bạn có chắn muốn thêm không?")
-        if(confix){
+       
         console.log('phukien =>' + JSON.stringify(phukien));
-
         PhuKienService.createnphukien(phukien)
             .then((res) => {
+                setShow(false);
                 toast.success('Save Successful');
-             
+               
             })
             .catch((error) => {
                 if (error && error.response && error.response.data) {
                     toast(error.response.data);
                 }
             });
-    };
+    
 }
     useEffect(() => {
         NhaCungCapService.getAll()
@@ -124,7 +135,7 @@ const AddPhuKien = () => {
                                             </AddNhaCC>
                                         </button>
                                     </div>
-                            <form onSubmit={savePhuKien}>
+                            <form>
                                 <div className=" row col-md-6 offset-md-3">
                                     <div className="md-3">
                                         <label>Nhà Cung Cấp</label>
@@ -165,7 +176,7 @@ const AddPhuKien = () => {
                                     <div className="md-3">
                                         <label className="form-label">Số Lượng Tồn</label>
                                         <input
-                                            type="number"
+                                            type="tel"
                                             className="form-control"
                                             name="soLuongTon"
                                             value={soLuongTon}
@@ -175,8 +186,8 @@ const AddPhuKien = () => {
                                     <div className="md-3">
                                         <label className="form-label">Giá</label>
                                         <input
+                                            type="tel"
                                             className="form-control"
-                                            type="number"
                                             name="gia"
                                             value={gia}
                                             onChange={changeGiaPhuKien}
@@ -210,13 +221,13 @@ const AddPhuKien = () => {
                                     </div>
                                     <div className=" row mt-3 form-outline form-white mb-2">
                                         <div className="col-6">
-                                            <button
+                                            <a
                                                 type="submit"
-                                                onClick={savePhuKien}
+                                                onClick={handleShow}
                                                 className="btn btn-secondary form-control"
                                             >
                                                 ADD
-                                            </button>
+                                            </a>
                                         </div>
                                         <div className="col-6">
                                             <Link
@@ -232,9 +243,29 @@ const AddPhuKien = () => {
                         </div>
                     </div>
                 </main>
-            </section><ToastContainer/>
+                <>
+          <Modal
+            show={show}
+            onHide={handleClose}
+            backdrop="static"
+            keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Thêm Phụ Kiện</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Bạn có chắc chắn muốn thêm ?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={handleClose}>
+                Không
+              </Button>
+              <Button variant="primary" onClick={savePhuKien}>
+                Có
+              </Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+            </section>
         </>
     );
 };
 
-export default AddPhuKien;
