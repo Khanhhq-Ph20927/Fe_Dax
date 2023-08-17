@@ -27,7 +27,7 @@ export const APP_ROUTERS = {
             VALUE: '/admin/appointment/detail/:id'
         },
     },
-    DichVu: {
+    Service: {
         INDEX: {
             LABEL: "QUAN LI DICH VU",
             VALUE: "admin/dichvu/index",
@@ -73,7 +73,7 @@ export const APP_ROUTERS = {
             VALUE: "admin/dichvu/delete",
         },
     },
-    LoaiDichVu: {
+    Service_Type: {
         INDEX: {
             LABEL: "QUAN LI LOAI DICH VU",
             VALUE: "admin/loaidichvu/index",
