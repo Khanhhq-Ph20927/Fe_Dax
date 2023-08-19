@@ -399,3 +399,11 @@
 .padd3 {
 	padding: 10px;
 }
+
+.error {
+	color: red;
+	font-size: 12px;
+	text-align: center;
+	margin: 10px 0;
+	font-weight: bold;
+}

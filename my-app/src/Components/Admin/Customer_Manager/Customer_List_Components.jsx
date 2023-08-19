@@ -219,7 +219,7 @@ export default function Customer_List_Components() {
                 customer.hoTen,
                 customer.email,
                 customer.sdt,
-                customer.tinhThanhPho,
+                customer.tinhThanh,
                 customer.quanHuyen,
                 customer.gioiTinh ? "Nam" : "Nữ"
             ]),
@@ -242,7 +242,7 @@ export default function Customer_List_Components() {
                     const hoTen = jsonData[index] && jsonData[index][2];
                     const email = jsonData[index] && jsonData[index][3];
                     const sdt = jsonData[index] && jsonData[index][4];
-                    const tinhThanhPho = jsonData[index] && jsonData[index][5];
+                    const tinhThanh = jsonData[index] && jsonData[index][5];
                     const quanHuyen = jsonData[index] && jsonData[index][6];
                     const gender = jsonData[index] && jsonData[index][7];
                     var gioiTinh;
@@ -255,7 +255,7 @@ export default function Customer_List_Components() {
                         hoTen,
                         email,
                         sdt,
-                        tinhThanhPho,
+                        tinhThanh,
                         quanHuyen,
                         gioiTinh
                     }
@@ -312,14 +312,14 @@ export default function Customer_List_Components() {
     }
     const updateCustomer = (e) => {
         e.preventDefault();
-        let tinhThanhPho = ttp;
+        let tinhThanh = ttp;
         let quanHuyen = qh;
         let customerUpdate = {
             maKhachHang,
             hoTen,
             email,
             sdt,
-            tinhThanhPho,
+            tinhThanh,
             quanHuyen,
             gioiTinh,
             matKhau,
@@ -330,31 +330,13 @@ export default function Customer_List_Components() {
                 if (response.data === "ok") {
                     Customer_Service.updateCustomer(customerUpdate, ID).then((response) => {
                         if (response.status === 200) {
-                            toast.success('🦄 Sửa thành công!', {
-                                position: "top-right",
-                                autoClose: 2000,
-                                hideProgressBar: false,
-                                closeOnClick: true,
-                                pauseOnHover: true,
-                                draggable: true,
-                                progress: undefined,
-                                theme: "light",
-                            });
+                            toast.success('🦄 Sửa thành công!');
                             setShowModal(false);
                             fetchData();
                         }
                     });
                 } else {
-                    toast.error(response.data, {
-                        position: "top-right",
-                        autoClose: 2000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "light",
-                    });
+                    toast.error(response.data);
                 }
             })
         }
@@ -414,7 +396,7 @@ export default function Customer_List_Components() {
                                                     <td>{customer.hoTen}</td>
                                                     <td>{customer.email}</td>
                                                     <td>{customer.sdt}</td>
-                                                    <td>{customer.quanHuyen + ", " + customer.tinhThanhPho}</td>
+                                                    <td>{customer.quanHuyen + ", " + customer.tinhThanh}</td>
                                                     <td>{customer.gioiTinh === true ? "Nam" : "Nữ"}</td>
                                                     <td><button className='btn btn-danger' onClick={() => deleteById(customer.id)}><i class="bx bxs-trash"></i></button>
                                                         <span className="padd2"></span>

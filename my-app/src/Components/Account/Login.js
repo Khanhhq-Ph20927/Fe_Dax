@@ -74,9 +74,9 @@ export default function Login() {
                 >
                   <div className="card-body p-5 text-center">
                     <div className="mb-md-5 mt-md-4 pb-5">
-                      <h2 className="fw-bold mb-2 text-uppercase">Login</h2>
+                      <h2 className="fw-bold mb-2 text-uppercase">Đăng Nhập</h2>
                       <p className="text-white-50 mb-5">
-                        Please enter your email and password!
+                        Hãy nhập email và mật khẩu!
                       </p>
                       <div className="form-outline form-white mb-4">
                         <label className="form-label">Email</label>
@@ -87,7 +87,7 @@ export default function Login() {
                         />
                       </div>
                       <div className="form-outline form-white mb-4">
-                        <label className="form-label">Password</label>
+                        <label className="form-label">Mật Khẩu</label>
                         <input
                           type="password"
                           className="form-control form-control-lg"
@@ -96,14 +96,14 @@ export default function Login() {
                       </div>
                       <p className="small mb-5 pb-lg-2">
                         <a className="text-white-50" href="#!">
-                          Forgot password?
+                          Quên Mật Khẩu?
                         </a>
                       </p>
                       <button
                         className="btn btn-outline-light btn-lg px-5"
                         type="submit"
                       >
-                        Login
+                        Đăng Nhập
                       </button>
                       <div className="d-flex justify-content-center text-center mt-4 pt-1">
                         <a href="#!" className="text-white">
@@ -122,9 +122,9 @@ export default function Login() {
                     </div>
                     <div>
                       <p className="mb-0">
-                        Don't have an account?{" "}
+                        Chưa có tài khoản?{" "}
                         <a href="/register" className="text-white-50 fw-bold">
-                          Sign Up
+                          Đăng Ký
                         </a>
                       </p>
                     </div>

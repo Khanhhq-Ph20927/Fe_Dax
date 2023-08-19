@@ -75,28 +75,10 @@ export default function Login_With_NumberPhone() {
                     const isCustomer = hasRole(userInfo, 'CUSTOMER');
                     if (isAdmin) {
                         window.location.href = "/admin/customer/index";
-                        toast.success('🦄 Đăng nhập thành công!', {
-                            position: "top-right",
-                            autoClose: 2000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                            theme: "light",
-                        });
+                        toast.success('🦄 Đăng nhập thành công!');
                     } else if (isCustomer) {
                         window.location.href = "/home";
-                        toast.success('🦄 Đăng nhập thành công!', {
-                            position: "top-right",
-                            autoClose: 2000,
-                            hideProgressBar: false,
-                            closeOnClick: true,
-                            pauseOnHover: true,
-                            draggable: true,
-                            progress: undefined,
-                            theme: "light",
-                        });
+                        toast.success('🦄 Đăng nhập thành công!',);
                     } else {
                         console.log("Invalid Token");
                     }
@@ -147,7 +129,7 @@ export default function Login_With_NumberPhone() {
                                                     </p>
                                                     <div className="form-outline form-white mb-4" style={{ paddingLeft: 70, paddingBottom: 50 }}>
                                                         <OTPInput value={otp} onChange={setOTP} autoFocus OTPLength={6}
-                                                            otpType="number" disabled={false} secure />
+                                                            otpType="number" disabled={false} />
                                                     </div>
                                                     <button
                                                         className="btn btn-outline-light btn-lg px-5"
