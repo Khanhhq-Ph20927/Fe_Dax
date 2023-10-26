@@ -2,6 +2,8 @@ import axios from "axios";
 const API = "https://provinces.open-api.vn/api/?depth=2";
 const API_GET_DISTRICTS = "https://provinces.open-api.vn/api/d/";
 const API_GET_DISTRICTS_BY_CODE = "https://provinces.open-api.vn/api/p/";
+const API_GET_WARD_BY_CODE = "https://provinces.open-api.vn/api/d/";
+
 class Province_Service {
     constructor() {
         this.axiosInstance = axios.create({
@@ -20,6 +22,9 @@ class Province_Service {
     }
     getDistrictsByCode(code) {
         return axios.get(API_GET_DISTRICTS_BY_CODE + code + "?depth=2");
+    }
+    getWardByCodeDistricts(code) {
+        return axios.get(API_GET_WARD_BY_CODE + code + "/?depth=2");
     }
 }
 

@@ -2,87 +2,85 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "../Layout/Sidebar";
 import Customer_Service from "../../../Api/Customer_Service";
-import Common_Util from "../../../Utils/Common_Util";
+// import Common_Util from "../../../Utils/Common_Util";
 import { Modal, Button } from "react-bootstrap";
-import Select from 'react-select';
-import makeAnimated from 'react-select/animated';
-import Province_Service from "../../../Api/Province_Service";
+// import Select from 'react-select';
+// import makeAnimated from 'react-select/animated';
+// import Province_Service from "../../../Api/Province_Service";
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import * as XLSX from 'xlsx/xlsx.mjs';
+// import * as XLSX from 'xlsx/xlsx.mjs';
+import Export_Components from './Excel/Export_Components';
+import Import_Components from './Excel/Import_Components'
+import Modal_Detail_Customer from "./Modal_Detail_Customer";
 
 export default function Customer_List_Components() {
+
     const [number, setNumber] = useState(0);
     const [pageData, setPageData] = useState([]);
     const [nameSearch, setNameSearch] = useState('');
-    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [customer, setCustomer] = useState();
+    // const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [maxPage, setMaxPage] = useState(0);
     const [showModal, setShowModal] = useState(false);
-    const [maKhachHang, setMaKhachHang] = useState('');
-    const [hoTen, setHoTen] = useState('');
-    const [email, setEmail] = useState('');
-    const [ttp, setTTP] = useState();
-    const [qh, setQH] = useState();
-    const [sdt, setSdt] = useState('');
-    const [gioiTinh, setGioiTinh] = useState(true);
-    const [matKhau, setMatKhau] = useState('');
-    const [province, setProvince] = useState([]);
-    const [districts, setDistricts] = useState([]);
-    const [selectedDistricts, setSelectedDistricts] = useState([]);
-    const [selectedProvince, setSelectedProvince] = useState(null);
-    const [ID, setID] = useState(null);
+    // const [khachHang, setKhachHang] = useState({
+    //     maKhachHang: '',
+    //     hoTen: '',
+    //     ttp: '',
+    //     qh: '',
+    //     sdt: '',
+    //     gioiTinh: true,
+    //     email: '',
+    //     matKhau: ''
+    // });
+    // const [province, setProvince] = useState([]);
+    // const [districts, setDistricts] = useState([]);
+    // const [ward, setWard] = useState([]);
+    // const [selectedDistricts, setSelectedDistricts] = useState([]);
+    // const [selectedProvince, setSelectedProvince] = useState(null);
+    // const [ID, setID] = useState(null);
 
-    useEffect(() => {
-        customerDetail();
-        ListProvince();
-        ListDistricts();
-        getDistrictss();
-        getProvince();
-    }, [ID])
+    // useEffect(() => {
+    //     // customerDetail();
+    //     // ListProvince();
+    //     // ListDistricts();
+    //     // getDistrictss();
+    //     // getProvince();
+    // }, [ID])
 
-    useEffect(() => {
-        getDistrictss();
-        getProvince();
-    }, [])
-
-    useEffect(() => {
-        getDistricts();
-    }, [selectedProvince]);
-
-    const animatedComponents = makeAnimated();
+    // useEffect(() => {
+    //     getDistricts();
+    // }, [selectedProvince]);
 
     useEffect(() => {
         fetchData();
     }, [number])
+
     const fetchData = async () => {
         try {
             const response = await Customer_Service.getCustomer(number);
             const data = response.data.content;
             setMaxPage(response.data.totalPages);
             setPageData(data);
-            console.log(data);
         }
         catch (error) {
             console.error(error);
         }
     };
-    const showCustomerDetailModal = (customer, id) => {
-        setSelectedCustomer(customer);
+
+    const showCustomerDetailModal = (customer) => {
+        // setSelectedCustomer(customer);
+        setCustomer(customer);
         setShowModal(true);
-        setMaKhachHang(customer.maKhachHang);
-        setHoTen(customer.hoTen);
-        setSdt(customer.sdt);
-        setEmail(customer.email);
-        setGioiTinh(customer.gioiTinh);
-        setMatKhau('');
-        setID(id);
     };
+
     const myStyle = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
     }
+
     const handlePreviousPage = () => {
         if (number > 0) {
             setNumber((prevPageNumber) => prevPageNumber - 1);
@@ -95,197 +93,126 @@ export default function Customer_List_Components() {
             setNumber(0);
         }
     };
+
     const changeNameSearch = (e) => {
         setNameSearch(e.target.value);
     }
+
     const searchByName = (nameSearch) => {
         if (nameSearch.length === 0) {
-            alert("Hãy Nhập Keyword!");
+            toast.error("Hãy Nhập Keyword!");
             return;
         }
     }
-    const customerDetail = async () => {
-        if (ID !== null) {
-            const response = await Customer_Service.getById(ID);
-            let customer = response.data;
-            setMaKhachHang(customer.maKhachHang);
-            setHoTen(customer.hoTen);
-            setTTP(customer.tinhThanhPho);
-            setQH(customer.quanHuyen);
-            setEmail(customer.email);
-            setSdt(customer.sdt);
-            setGioiTinh(customer.gioiTinh);
-        }
-    };
 
-    const ListProvince = () => new Promise(async (resolve, reject) => {
-        try {
-            const response = await Province_Service.getProvince();
-            setProvince(response);
-            resolve(response);
-        } catch (error) {
-            console.error(error);
-        }
-    });
-    const ListDistricts = () => new Promise(async (resolve, reject) => {
-        try {
-            const response = await Province_Service.getDistricts();
-            setDistricts(response);
-            resolve(response);
-        } catch (error) {
-            console.error(error);
-        }
-    });
+    // const customerDetail = async () => {
+    //     if (ID !== null) {
+    //         const response = await Customer_Service.getById(ID);
+    //         let customer = response.data;
+    //         setKhachHang(() => ({
+    //             maKhachHang: customer.maKhachHang,
+    //             hoTen: customer.hoTen,
+    //             ttp: customer.tinhThanhPho,
+    //             qh: customer.quanHuyen,
+    //             email: customer.email,
+    //             sdt: customer.sdt,
+    //             gioiTinh: customer.gioiTinh
+    //         }))
+    //     }
+    // };
 
-    const Provinces = province.map((pro) => ({
-        value: pro.code,
-        label: pro.name,
+    // const ListProvince = () => new Promise(async (resolve) => {
+    //     try {
+    //         const response = await Province_Service.getProvince();
+    //         setProvince(response);
+    //         resolve(response);
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // });
+    // const ListDistricts = () => new Promise(async (resolve) => {
+    //     try {
+    //         const response = await Province_Service.getDistricts();
+    //         setDistricts(response);
+    //         resolve(response);
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // });
 
-    }));
+    // const Provinces = province.map((pro) => ({
+    //     value: pro.code,
+    //     label: pro.name,
 
-    const getDistricts = async () => {
-        if (selectedProvince === null) {
-            setSelectedDistricts(districts);
-        } else {
-            const response = await Province_Service.getDistrictsByCode(selectedProvince);
-            const data = response.districts;
-            setSelectedDistricts(data);
-        }
-    };
-    const Districtss = districts.map((dis) => ({
-        value: dis.name,
-        label: dis.name,
+    // }));
 
-    }));
+    // const getDistricts = async () => {
+    //     if (selectedProvince === null) {
+    //         setSelectedDistricts(districts);
+    //     } else {
+    //         const response = await Province_Service.getDistrictsByCode(selectedProvince);
+    //         const data = response.districts;
+    //         setSelectedDistricts(data);
+    //     }
+    // };
+    // const Districtss = districts.map((dis) => ({
+    //     value: dis.name,
+    //     label: dis.name,
 
-    const getProvince = () => {
-        for (let i = 0; i < province.length; i++) {
-            if (province[i].name === ttp) {
-                return { value: province[i].code, label: province[i].name };
-            }
-        }
-        return null;
-    }
+    // }));
 
-    const getDistrictss = () => {
-        for (let i = 0; i < districts.length; i++) {
-            if (districts[i].name === qh) {
-                return { value: districts[i].name, label: districts[i].name };
-            }
-        }
-        return null;
-    }
+    // const getProvince = () => {
+    //     for (let i = 0; i < province.length; i++) {
+    //         if (province[i].name === khachHang.ttp) {
+    //             return { value: province[i].code, label: province[i].name };
+    //         }
+    //     }
+    //     return null;
+    // }
 
-    const Districtsss = selectedDistricts.map((dis) => ({
-        value: dis.name,
-        label: dis.name,
+    // const getDistrictss = () => {
+    //     for (let i = 0; i < districts.length; i++) {
+    //         if (districts[i].name === khachHang.qh) {
+    //             return { value: districts[i].name, label: districts[i].name };
+    //         }
+    //     }
+    //     return null;
+    // }
 
-    }));
-    const defaultValueDistricts = getDistrictss();
-    const defaultValueProvince = getProvince();
+    // const Districtsss = selectedDistricts.map((dis) => ({
+    //     value: dis.name,
+    //     label: dis.name,
 
-    const changeMa = (e) => {
-        setMaKhachHang(e.target.value);
-    }
-    const changeName = (e) => {
-        setHoTen(e.target.value);
-    }
-    const changeEmail = (e) => {
-        setEmail(e.target.value);
-    }
-    const changeSdt = (e) => {
-        setSdt(e.target.value);
-    }
-    const changeMatKhau = (e) => {
-        setMatKhau(e.target.value);
-    }
-    const changeTTP = (selectedOptions) => {
-        setTTP(selectedOptions.label);
-        if (selectedOptions) {
-            setSelectedProvince(selectedOptions.value);
-        }
-    }
-    const changeQH = (selectedOptions) => {
-        setQH(selectedOptions.label);
-    }
-    const onchangeExport = async () => {
-        const response = await Customer_Service.getCustomer(number);
-        const customers = response.data.content;
-        const data = [
-            ['STT', 'Mã Khách Hàng', 'Họ Tên', 'Email', 'Số Điện Thoại', 'Tỉnh, Thành Phố', "Quận, Huyện", 'Giới Tính'],
-            ...customers.map((customer, index) => [
-                index + 1,
-                customer.maKhachHang,
-                customer.hoTen,
-                customer.email,
-                customer.sdt,
-                customer.tinhThanh,
-                customer.quanHuyen,
-                customer.gioiTinh ? "Nam" : "Nữ"
-            ]),
-        ];
-        await Common_Util.exportExcel(data, "Danh Sách Khách Hàng Trang " + (Number(number) + 1), "ListCustomer" + (Number(number) + 1));
-    }
-    const onchangeImport = async (e) => {
-        const selectedFile = e.target.files[0];
-        const fileReader = new FileReader();
-        let i = 0;
-        let y = 0;
-        fileReader.onload = async (e) => {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-            console.log(jsonData);
-            if (window.confirm('Bạn Có Muốn Thêm Dữ Liệu Vào Hệ Thống!')) {
-                for (let index = 2; index < jsonData.length; index++) {
-                    const hoTen = jsonData[index] && jsonData[index][2];
-                    const email = jsonData[index] && jsonData[index][3];
-                    const sdt = jsonData[index] && jsonData[index][4];
-                    const tinhThanh = jsonData[index] && jsonData[index][5];
-                    const quanHuyen = jsonData[index] && jsonData[index][6];
-                    const gender = jsonData[index] && jsonData[index][7];
-                    var gioiTinh;
-                    if (gender === "Nam") {
-                        gioiTinh = true;
-                    } else {
-                        gioiTinh = false;
-                    }
-                    const customer = {
-                        hoTen,
-                        email,
-                        sdt,
-                        tinhThanh,
-                        quanHuyen,
-                        gioiTinh
-                    }
-                    console.log(customer);
+    // }));
 
-                    const response = await Customer_Service.validate(customer);
-                    if (response.data === 'ok') {
-                        i++;
-                    } else {
-                        console.error(response.data);
-                        y++;
-                    }
+    // const defaultValueDistricts = getDistrictss();
+    // const defaultValueProvince = getProvince();
 
-                    Customer_Service.saveCustomer(customer).then((response) => {
-                        if (response.status === 200) {
-                            console.log("success");
-                            fetchData();
-                        } else {
-                            console.log("fail");
-                        }
-                    });
-                }
-            }
-            if (y === 0)
-                alert("Có " + i + " Bản Ghi Được Thêm Thành Công!");
-            else
-                alert("Có " + i + " Bản Ghi Được Thêm Thành Công Và " + y + " Bản Ghi Chưa Được Thêm!");
-        };
-        fileReader.readAsArrayBuffer(selectedFile);
-    }
+    // const changeId = (e) => {
+    //     setKhachHang((preCustomer) => ({ ...preCustomer, maKhachHang: e.target.value }));
+    // }
+    // const changeName = (e) => {
+    //     setKhachHang((preCustomer) => ({ ...preCustomer, hoTen: e.target.value }));
+    // }
+    // const changeEmail = (e) => {
+    //     setKhachHang((preCustomer) => ({ ...preCustomer, email: e.target.value }));
+    // }
+    // const changeSdt = (e) => {
+    //     setKhachHang((preCustomer) => ({ ...preCustomer, sdt: e.target.value }));
+    // }
+    // const changeMatKhau = (e) => {
+    //     setKhachHang((preCustomer) => ({ ...preCustomer, matKhau: e.target.value }));
+    // }
+    // const changeProvince = (selectedOptions) => {
+    //     setKhachHang((preCustomer) => ({ ...preCustomer, ttp: selectedOptions.label }));
+    //     if (selectedOptions) {
+    //         setSelectedProvince(selectedOptions.value);
+    //     }
+    // }
+    // const changeDistrict = (selectedOptions) => {
+    //     setKhachHang((preCustomer) => ({ ...preCustomer, qh: selectedOptions.label }));
+    // }
+
     const deleteById = (id) => {
         Swal.fire({
             title: 'Bạn có muốn xoá?',
@@ -310,37 +237,44 @@ export default function Customer_List_Components() {
             }
         })
     }
-    const updateCustomer = (e) => {
-        e.preventDefault();
-        let tinhThanh = ttp;
-        let quanHuyen = qh;
-        let customerUpdate = {
-            maKhachHang,
-            hoTen,
-            email,
-            sdt,
-            tinhThanh,
-            quanHuyen,
-            gioiTinh,
-            matKhau,
-        }
-        console.log('customer =>' + JSON.stringify(customerUpdate));
-        if (ID !== null) {
-            Customer_Service.validateFU(ID, customerUpdate).then((response) => {
-                if (response.data === "ok") {
-                    Customer_Service.updateCustomer(customerUpdate, ID).then((response) => {
-                        if (response.status === 200) {
-                            toast.success('🦄 Sửa thành công!');
-                            setShowModal(false);
-                            fetchData();
-                        }
-                    });
-                } else {
-                    toast.error(response.data);
-                }
-            })
-        }
-    }
+    // const updateCustomer = (e) => {
+    //     e.preventDefault();
+    //     let maKH = khachHang.maKhachHang;
+    //     let hoTen = khachHang.hoTen;
+    //     let email = khachHang.email;
+    //     let sdt = khachHang.sdt;
+    //     let gioiTinh = khachHang.gioiTinh;
+    //     let matKhau = khachHang.matKhau;
+    //     let tinhThanh = khachHang.ttp;
+    //     let quanHuyen = khachHang.qh;
+    //     const customerUpdate = {
+    //         maKH,
+    //         hoTen,
+    //         email,
+    //         sdt,
+    //         tinhThanh,
+    //         quanHuyen,
+    //         gioiTinh,
+    //         matKhau,
+    //     }
+    //     console.log('customer =>' + JSON.stringify(customerUpdate));
+    //     if (ID !== null) {
+    //         Customer_Service.validateFU(ID, customerUpdate).then((response) => {
+    //             if (response.data === "ok") {
+    //                 Customer_Service.updateCustomer(customerUpdate, ID).then((response) => {
+    //                     if (response.status === 200) {
+    //                         toast.success('Sửa thành công!');
+    //                         setShowModal(false);
+    //                         fetchData();
+    //                     }
+    //                 });
+    //             } else {
+    //                 toast.error(response.data);
+    //             }
+    //         })
+    //     }
+    // }
+
     return (
         <>
             <Sidebar />
@@ -358,12 +292,10 @@ export default function Customer_List_Components() {
                                     </Link>
                                 </div>
                                 <div>
-                                    <button onClick={() => onchangeExport()} className="btn btn-success">
-                                        Export
-                                    </button>
+                                    <Export_Components number={number} />
                                 </div>
                                 <div>
-                                    <input className="form-control form-control-sm" id="formFileSm" accept=".xlsx" type="file" onChange={(e) => onchangeImport(e)} />
+                                    <Import_Components number={number} />
                                 </div>
                             </div>
                             <div className="col-md-6">
@@ -400,7 +332,7 @@ export default function Customer_List_Components() {
                                                     <td>{customer.gioiTinh === true ? "Nam" : "Nữ"}</td>
                                                     <td><button className='btn btn-danger' onClick={() => deleteById(customer.id)}><i class="bx bxs-trash"></i></button>
                                                         <span className="padd2"></span>
-                                                        <Button className='btn btn-success' onClick={() => showCustomerDetailModal(customer, customer.id)}><i class="bx bxs-edit"></i></Button>
+                                                        <Button className='btn btn-success' onClick={() => showCustomerDetailModal(customer)}><i class="bx bxs-edit"></i></Button>
                                                     </td>
                                                 </tr>
 
@@ -417,8 +349,10 @@ export default function Customer_List_Components() {
                         </div>
                     </div>
                 </main>
+
                 {/* MAIN */}
-                <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" aria-labelledby="contained-modal-title-vcenter">
+
+                {/* <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" aria-labelledby="contained-modal-title-vcenter">
                     <Modal.Header closeButton>
                         <Modal.Title>Chi tiết khách hàng</Modal.Title>
                     </Modal.Header>
@@ -430,8 +364,8 @@ export default function Customer_List_Components() {
                                         <label className="form-label">
                                             Mã Khách Hàng
                                         </label>
-                                        <input type="text" value={maKhachHang}
-                                            onChange={changeMa} className='form-control' />
+                                        <input type="text" value={khachHang.maKhachHang}
+                                            onChange={changeId} className='form-control' />
                                     </div>
                                 </div>
                                 <div className="col-md-6 padd2">
@@ -439,7 +373,7 @@ export default function Customer_List_Components() {
                                         <label className="form-label">
                                             Mật Khẩu
                                         </label>
-                                        <input type="text" value={matKhau}
+                                        <input type="text" value={khachHang.matKhau}
                                             onChange={changeMatKhau} className='form-control' />
                                     </div>
                                 </div>
@@ -450,7 +384,7 @@ export default function Customer_List_Components() {
                                         <label className="form-label">
                                             Họ Tên
                                         </label>
-                                        <input type="text" value={hoTen}
+                                        <input type="text" value={khachHang.hoTen}
                                             onChange={changeName} className='form-control' />
                                     </div>
                                 </div>
@@ -461,11 +395,11 @@ export default function Customer_List_Components() {
                                         </label>
                                         <div className="form-check">
                                             <input type="radio" className="form-check-input" value="true"
-                                                checked={gioiTinh} onChange={() => setGioiTinh(true)} /> Nam
+                                                checked={khachHang.gioiTinh} onChange={() => setKhachHang({ gioiTinh: true })} /> Nam
                                         </div>
                                         <div className="form-check">
                                             <input type="radio" className="form-check-input" value="false"
-                                                checked={!gioiTinh} onChange={() => setGioiTinh(false)} /> Nữ
+                                                checked={!khachHang.gioiTinh} onChange={() => setKhachHang({ gioiTinh: false })} /> Nữ
                                         </div>
                                     </div>
                                 </div>
@@ -476,7 +410,7 @@ export default function Customer_List_Components() {
                                         <label className="form-label">
                                             Email
                                         </label>
-                                        <input className="form-control" type="email" value={email}
+                                        <input className="form-control" type="email" value={khachHang.email}
                                             onChange={changeEmail} />
                                     </div>
                                 </div>
@@ -485,7 +419,7 @@ export default function Customer_List_Components() {
                                         <label className="form-label">
                                             Số Điện Thoại
                                         </label>
-                                        <input className="form-control" type="text" value={sdt}
+                                        <input className="form-control" type="text" value={khachHang.sdt}
                                             onChange={changeSdt} />
                                     </div>
                                 </div>
@@ -499,7 +433,7 @@ export default function Customer_List_Components() {
                                         <Select
                                             className="form-control"
                                             value={defaultValueProvince}
-                                            onChange={changeTTP}
+                                            onChange={changeProvince}
                                             closeMenuOnSelect={false}
                                             components={animatedComponents}
                                             options={Provinces}
@@ -510,6 +444,23 @@ export default function Customer_List_Components() {
                                     <div className="row">
                                         <label className="form-label padd3">
                                             Quận Huyện
+                                        </label>
+                                        <Select
+                                            className="form-control"
+                                            value={(defaultValueDistricts)}
+                                            onChange={changeDistrict}
+                                            closeMenuOnSelect={false}
+                                            components={animatedComponents}
+                                            options={selectedProvince === null ? Districtss : Districtsss}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-md-6 padd2">
+                                    <div className="row">
+                                        <label className="form-label padd3">
+                                            Thị Xã
                                         </label>
                                         <Select
                                             className="form-control"
@@ -531,7 +482,8 @@ export default function Customer_List_Components() {
                     </Modal.Body>
                     <Modal.Footer>
                     </Modal.Footer>
-                </Modal>
+                </Modal> */}
+                {showModal && (<Modal_Detail_Customer showModal={showModal} setShowModal={setShowModal} data={customer} />)}
             </section>
         </>
     );

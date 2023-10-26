@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 function Appointment_List_Components() {
+
     const [number, setNumber] = useState(0);
     const [numberStatus, setNumberStatus] = useState(0);
     const [numberType, setNumberType] = useState(0);
@@ -37,7 +38,9 @@ function Appointment_List_Components() {
     const [customer, setCustomer] = useState([]);
     const [customerDetail, setCustomerDetail] = useState(null);
     const [customerValue, setCustomerValue] = useState({});
+
     const animatedComponents = makeAnimated();
+
     const myStyle = {
         display: 'flex',
         justifyContent: 'center',

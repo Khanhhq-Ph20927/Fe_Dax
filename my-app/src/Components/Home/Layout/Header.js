@@ -7,7 +7,7 @@ export default function Header() {
   const [status, setStatus] = useState(0);
   const token = localStorage.getItem("token");
   useEffect(() => {
-    if (token) {
+    if (token == !undefined) {
       setStatus(1);
     }
   }, [token])

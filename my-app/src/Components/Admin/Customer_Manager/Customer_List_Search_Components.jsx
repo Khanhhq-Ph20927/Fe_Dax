@@ -91,8 +91,7 @@ function Customer_List_Search_Components() {
                                     <tr>
                                         <th>STT</th>
                                         <th>Mã Khách Hàng</th>
-                                        <th>Họ</th>
-                                        <th>Tên</th>
+                                        <th>Họ Tên</th>
                                         <th>Email</th>
                                         <th>Số Điện Thoại</th>
                                         <th>Địa Chỉ</th>
@@ -107,11 +106,10 @@ function Customer_List_Search_Components() {
                                                 <tr key={customer.id}>
                                                     <td>{index + 1}</td>
                                                     <td>{customer.maKhachHang}</td>
-                                                    <td>{customer.ho}</td>
-                                                    <td>{customer.ten}</td>
+                                                    <td>{customer.hoTen}</td>
                                                     <td>{customer.email}</td>
                                                     <td>{customer.sdt}</td>
-                                                    <td>{customer.diaChi}</td>
+                                                    <td>{customer.tinhThanh + ", " + customer.quanHuyen}</td>
                                                     <td>{customer.gioiTinh === true ? "Nam" : "Nữ"}</td>
                                                     <td><button className='btn btn-danger' onClick={() => deleteById(customer.id)}>Delete</button>
                                                         <span className="padd2"></span>
